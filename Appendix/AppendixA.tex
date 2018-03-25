@@ -1,0 +1,112 @@
+\chapter{From Abstract Algebra to Finite Fields}
+\label{app:A}
+% handbook of applied cryptography
+
+In this section we recall the formal definitions from \cite{Menezes97handbookof} to properly understand what a finite field is.
+
+\section{Groups}
+\begin{mydef} A binary operation $*$ on a set $S$ is a mapping  $S \times S$ to $S$. That is, $*$ is a rule which assigns to each ordered pair of elements from $S$ an element of $S$. \end{mydef}
+
+\begin{mydef} 
+	A group $(G, *)$ consists of a set $G$ with a binary operation $*$ on G satisfying
+	the following three axioms.
+	\begin{itemize}
+		\item[(i)] The group operation is associative. That is, $a* (b * c) = (a* b) * c \quad \forall a, b, c \in G$.
+		\item[(ii)] There is an element $1 \in G$, called the identity element, such that $a * 1 = 1 * a = a \quad \forall a \in G$.
+		\item[(iii)] For each $a \in G $ there exists an element $a^{-1} \in G$, called the inverse of $a$, such that $a *a^{-1}= a^{-1} * a = 1$.
+	\end{itemize}
+	A group G is Abelian (or commutative) if, furthermore,
+	\begin{itemize}
+		\item[(iv)] $a * b = b * a \quad \forall a, b \in G$. 
+	\end{itemize}
+\end{mydef}
+
+\begin{mydef} 
+	A group $G$ is finite if $|G|$ is finite. The number of elements in a finite group is called its order.
+\end{mydef}
+
+\begin{myexample} 
+	The set of integers $\mathbb{Z}$ with the operation of addition forms a group. 
+	The identity element is 0 and the inverse of an integer $a$ is the integer $−a$. \end{myexample}
+
+\begin{myexample} 
+	The set $\mathbb{Z}_n$, with the operation of addition modulo $n$, forms a group of order $n$. 
+	The set $\mathbb{Z}_n$ with the operation of multiplication modulo $n$ is not a group, since not all elements have multiplicative inverses. 
+\end{myexample}
+
+\begin{mydef} 
+	The multiplicative group of $\mathbb{Z}_n$ is $\mathbb{Z}_n^* = \{a \in \mathbb{Z}_n | gcd(a, n) = 1\}$. 
+	In particular, if n is a prime, then $\mathbb{Z}_n^* = \{a | 1 \leq a \leq n − 1\}$.
+\end{mydef}
+
+\begin{myexample} 
+	The set $\mathbb{Z}_n^*$ is a group under the operation of multiplication modulo $n$, with identity element 1.\end{myexample}
+
+\begin{mydef}
+	A non-empty subset $H$ of a group $G$ is a subgroup of $G$ if $H$ is itself a group
+	with respect to the operation of $G$. If $H$ is a subgroup of $G$ and $H \neq G$, then $H$ is called a proper subgroup of $G$.
+\end{mydef}
+
+\begin{mydef} 
+	A group $G$ is cyclic if there is an element $α \in G $such that for each $b \in G$ there is an integer $i$ with $b= \alpha^i$. Such an element $\alpha$ is called a generator of $G$. 
+\end{mydef}
+
+\section{Rings}
+
+\begin{mydef} 
+	A ring $(R,+,\times)$ consists of a set $R$ with two binary operations arbitrarily denoted $+$ (addition) and $\times$ (multiplication) on $R$, satisfying the following axioms.
+	\begin{itemize}
+		\item[(i)] $(R, +)$ is an abelian group with identity denoted $0$.
+		\item[(ii)] The operation $\times$ is associative. That is, $a \times (b \times c) = (a \times b)\times c \quad \forall a, b, c \in R$.
+		\item[(iii)] There is a multiplicative identity denoted $1$, with $1 \neq 0$, such that $1 \times a = a \times 1 = a \forall a \in R.$.
+		\item[(iv)] The operation $\times$ is distributive over $+$. That is, $a \times (b+c) = (a \times b)+(a \times c) \textmd{ and } (b + c) \times a = (b \times a) + (c \times a) \quad \forall a, b, c \in R.$
+		
+	\end{itemize} 
+	The ring is a commutative ring if $a \times b = b \times a \quad \forall a, b \in R$.
+\end{mydef}
+
+\begin{myexample}
+	The set $\mathbb{Z}_n$ with addition and multiplication performed modulo $n$ is a commutative ring.
+\end{myexample}
+
+\begin{mydef} 
+	An element $a$ of a ring $R$ is called a unit or an invertible element if there is an element $b \in R $ such that $a \times b = 1$. 
+	The set of units in a ring $R$ forms a group under multiplication, called the group of units of $R$.
+\end{mydef}
+
+\begin{myexample} 
+	The group of units of the ring $\mathbb{Z}_n$ is $\mathbb{Z}_n^*$. 
+\end{myexample}
+
+
+\section{Fields}
+
+\begin{mydef} 
+	A field is a commutative ring in which all non-zero elements have multiplicative inverses.  
+\end{mydef}
+
+\begin{myexample} 
+	the rational numbers $\mathbb{Q}$, the real numbers $\mathbb{R}$, and the complex numbers $\mathbb{C}$ form fields of characteristic $0$ under the usual operations. 
+\end{myexample}
+
+\begin{mydef} 
+	The characteristic of a field is 0 if $\overbrace{1+1+\dots+1}^{m times}$ is never equal to $0$ for any $m \geq 1$. Otherwise, the characteristic of the field is the least positive integer $m$ such that $\sum_{i=1}^{m}1 = 0$.
+\end{mydef}
+
+\begin{myexample} 
+	$\mathbb{Z}_n$ is a field (under the usual operations of addition and multiplication modulo $n$) if and only if $n$ is a prime number. If $n$ is prime, then $\mathbb{Z}_n$ has characteristic $n$. 
+\end{myexample}
+
+\section{Finite Fields}
+
+\begin{mydef} 
+	A finite field is a field $F$ which contains a finite number of elements. The order of $F$ is the number of elements in $F$. \end{mydef}
+
+\begin{myprop}
+	(existence and uniqueness of finite fields)
+	\begin{itemize}
+		\item[(i)] If $F$ is a finite field, then $F$ contains $p^m$ elements for some prime $p$ and integer $m \geq 1$.
+		\item[(ii)] For every prime power order $p^m$, there is a unique (up to isomorphism) finite field of order $p^m$. This field is denoted by $\mathbb{F}_{p^m}$, or sometimes by $GF(p^m)$\footnote{Galois Field}.
+	\end{itemize}
+	Informally speaking, two fields are isomorphic if they are structurally the same, although the representation of their field elements may be different. Note that if $p$ is a prime then $\mathbb{Z}_p$ is a field, and hence every field of order $p$ is isomorphic to $\mathbb{Z}_p$. Thus the finite field $\mathbb{F}_p$ can be identified with $\mathbb{Z}_p$.
+\end{myprop}

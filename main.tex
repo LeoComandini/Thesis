@@ -1,0 +1,126 @@
+\documentclass[12pt, a4paper, oneside]{book}
+
+
+\include{packages}
+
+%% remark theoremstyle
+%\newtheoremstyle{break}
+%{\topsep}{\topsep}%
+%{\itshape}{}%
+%{\bfseries}{}%
+%{\newline}{}%
+%\theoremstyle{break}
+%\newtheorem{remark}{Remark}[section]
+
+% problem theoremstyle
+%\newtheoremstyle{problemstyle}  % <name>
+%{10pt}  % <space above>
+%{10pt}  % <space below>
+%{\normalfont} % <body font>
+%{}  % <indent amount}
+%{\bfseries\itshape} % <theorem head font>
+%{\normalfont\bfseries:} % <punctuation after theorem head>
+%{.5em} % <space after theorem head>
+%{} % <theorem head spec (can be left empty, meaning `normal')>
+%\theoremstyle{problemstyle}
+%\newtheorem{problem}{Problem}[section] % Comment out [section] toremove section number dependence
+%\newtheorem{definition}{Definition}[section]
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{proposition}{Proposition}[section]
+%\newtheorem{remark}{Remark}[section]
+%\newtheorem{lemma}{Lemma}[section]
+% create command for variance in math mode
+%\newcommand{\Var}[1]{\operatorname{Var}\left[#1\right]}
+\newtheorem{mydef}{Definition}[section]
+\newtheorem{myexample}{Example}[section]
+\newtheorem{myprop}{Proposition}[section]
+
+\renewcommand\textflush{flushright}
+\setlength\epigraphwidth{.6\textwidth}
+
+\makeglossaries
+\include{Glossary/Glossary}
+
+
+
+\begin{document}
+
+
+%----------------------------------------------------------------------------------------
+% COVER PAGE
+%----------------------------------------------------------------------------------------
+\pagestyle{empty}
+\input{Cover/cover}
+
+%----------------------------------------------------------------------------------------
+% ABSTRACT
+%---------------------------------------------------------------------------------------
+
+%% Set page numbers of the introduction to roman  
+\frontmatter
+\pagestyle{plain}
+%\include{Abstract/abstract}
+
+%\cleardoublepage
+\vspace*{\fill}
+\epigraph{\textit{Sed quis custodiet ipsos Custodes?}\\But who will guard the guards themselves?}{Juvenal, c. 100 A.D.}
+\vspace*{\fill}
+
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\listofalgorithms
+\addcontentsline{toc}{chapter}{List of Algorithms}
+\printglossaries
+
+\include{Abstract/abstract}
+\include{Acknowledgement/acknowledgement}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter
+
+\include{Chapters/Introduction}
+
+\include{Chapters/Timestamping}
+
+\include{Chapters/Trustless_Timestamping}
+
+\include{Chapters/Trustless_Timestamping_State_of_the_Art}
+
+\include{Chapters/Elliptic_Curve_Commitments}
+
+\include{Chapters/Practical_Analysis_of_sign-to-contract}
+
+\include{Chapters/Conclusions}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\appendix
+\input{Appendix/AppendixA}
+
+
+\backmatter
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\backmatter
+\nocite{*}
+\bibliographystyle{acm}
+\bibliography{Bibliography/biblio}
+
+
+
+\end{document}  
