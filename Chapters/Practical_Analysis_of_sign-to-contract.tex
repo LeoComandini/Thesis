@@ -62,7 +62,7 @@ This has two problems: the proof almost double in size (two Merkle tree must be 
 
 \section{\textit{sign-to-contract} Made Accessible}
 The \textit{sign-to-contract} technique can be integrated in every Bitcoin singing software, so that, completely for free, it will also create timestamps.
-To make this accessible to everyone we developed a plugin for a popular open source wallet: Electrum \cite{ElectrumWeb} \cite{ElectrumGithub}. 
+To make this accessible to everyone we developed a plugin for a popular open source wallet: Electrum \cite{ElectrumWeb, ElectrumGithub}. 
 Electrum is a lightweight wallet, is similar to Simple Payment Verification (SPV) wallets, but instead it asks information to special nodes called the Electrum servers. The wallet, written in python, has very few requirements despite being really flexible, of course it comes at a price: privacy and security are not at the highest standard, unless it is used in very specific ways\footnote{Offline signing and connecting to a personal Electrum server would provide a satisfying but expensive solution.}.
 Having said this, it is completely functional for many purposes and it lends itself to host plugins that extend its working, like hardware wallet signing. 
 Its features lead our choice to Electrum.

@@ -11,19 +11,19 @@ We start with a general definition taken from \cite{Koblitz1987}\footnote{see Ap
 	\label{ec-eq}
 	y^2 = x^3 + ax + b, \quad a,b \in K
 	\end{equation}
-	together with a "point at infinity" $\mathcal{O}$
+	together with a "point at infinity" $\mathcal{O}$.
 \end{mydef}
 $\mathcal{O}$ is the projective closure of (\ref{ec-eq}) and may not be described in terms of two coordinates in $K$.
 The points on $E_K$ form a group with identity element the point at infinity. The negative point $P \in E_K$ is the second point on $E_K$ having the same $x$-coordinate as $P$. Let $P_1=(x_1,y_1)$ and $P_2=(x_2,y_2)$ be two points on the curve, their sum $P_3=(x_3,y_3) = P_1 + P_2$ is given by:
 \begin{equation}
 x_3 = -x_1 -x_2 + \alpha^2, \quad 
-y_3 = -y_1 + \alpha(x_1 - x_3)
+y_3 = -y_1 + \alpha(x_1 - x_3),
 \end{equation}
 where
 \begin{equation}
 \alpha = \begin{cases}
-			(y_2 - y_1)/(x_2 - x_1) & \textrm{if } P_1 \neq P_2 \\
-			(3x_1^2 + a)/(2y_1) & \textrm{if } P_1 = P_2
+			(y_2 - y_1)/(x_2 - x_1) & \textrm{if } P_1 \neq P_2, \\
+			(3x_1^2 + a)/(2y_1) & \textrm{if } P_1 = P_2.
 \end{cases}
 \end{equation}
 This \textit{addition} operation for elliptic curve points has a geometric interpretation for $K = \mathbb{R}$, from which the above more general algebraic formulae can be derived.
@@ -93,8 +93,8 @@ G = 02 79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9
 
 Combining conveniently elliptic curve points and hash functions is possible to create new commitment operations.
 A similar technique was used for the first time for deriving public keys in deterministic wallets \cite{Max11},
-then the concept of embedding a value in a elliptic curve point was exploited \cite{journals/corr/abs-1212-3257} \cite{Sidechain},
-later it was reformulated in a more refined way \cite{PoePR} \cite{PoeIs}
+then the concept of embedding a value in a elliptic curve point was exploited \cite{journals/corr/abs-1212-3257, Sidechain},
+later it was reformulated in a more refined way \cite{PoePR, PoeIs}
 suitable for the integration in OpenTimestamps.
 Let's analyse how this new commitment operations are structured.
 
@@ -131,7 +131,7 @@ Let's analyse how this new commitment operations are structured.
 	Now consider the case in which $P$ is not fixed.
 	Suppose we are able to find $x$ s.t. $P=xG$, the map $C$ can be seen as $m,x \mapsto x + h(xG||m)$ which is basically $m,x \mapsto x + \tilde{h}(x,m)$ for an opportune $\tilde{h}$.
 	If such map is a random oracle then we are done, since random oracles are second preimage resistant.
-	We assume $h$ is a random oracle, then also $\tilde{h}$ has the same feature, since it is independent from its input, morover the offset $x$ does not affect the property. 
+	We assume $h$ is a random oracle, then also $\tilde{h}$ has the same feature, since it is independent from its input, moreover the offset $x$ does not affect the property. 
 	Hence we conclude that the map is a random oracle which gives second preimage resistance.
 \end{proof}
 
@@ -146,7 +146,7 @@ This technique may be extended to more general cases, but we will treat only the
 Several hash functions and elliptic curves can be used, since we want to construct a working application on Bitcoin we will focus an a particular case with $h=$ SHA256 and $E_{\mathbb{F}_p}=secp256k1$ since Bitcoin itself relies on the assumption that this hash function and this elliptic curve are not broken, moreover the order of the curve $n$ is extremely close\footnote{The set of suitable images has cardinality 1 or 2, particularly the probability to choose an element with 2 possible images $1-\frac{n}{2^{256}}\approx10^{-33}$ which is almost zero.} 
 to the cardinality of the hash function codomain $2^{256}$. This commitment operation is called \verb|OpSecp256k1Commitment|.
 
-Morover to use the operation in a OpenTimestamp receipt it has to be a unary operation, hence it will take as input $P||m$ and will return the $x$-coordinate as output, both in bytes. More precisely it will operate as described in Algorithm \ref{alg:opsecp256k1}.
+Moreover to use the operation in a OpenTimestamp receipt it has to be an unary operation, hence it will take as input $P||m$ and will return the $x$-coordinate as output, both in bytes. More precisely it will operate as described in Algorithm \ref{alg:opsecp256k1}.
 \begin{algorithm}
 	\caption{Commitment to a $secp256k1$ point using SHA256}
 	\label{alg:opsecp256k1}

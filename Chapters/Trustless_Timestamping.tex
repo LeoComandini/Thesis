@@ -26,15 +26,15 @@ To implement a \textit{distributed} version of a timestamp server it is used a \
 \begin{mydef}{\textit{proof-of-work}}
 \label{pow}
 \\
-\textbf{Given}:
+\textbf{given}:
 \begin{itemize}
-	\item previous timestamp $TS_{i-1} \in \{0,1\}^n$
-	\item items to timestamp $items^i \in \{0,1\}^*$
-	\item target to beat $w>0$
+	\item previous timestamp $TS_{i-1} \in \{0,1\}^n$;
+	\item items to timestamp $items^i \in \{0,1\}^*$;
+	\item target to beat $w>0$;
 \end{itemize}
-\textbf{Find}:
+\textbf{find}:
 \begin{itemize}
-	\item $nonce \in \{0,1\}^*$ s.t. $h(TS_i || items_{i+1} || nonce) < w$
+	\item $nonce \in \{0,1\}^*$ s.t. $h(TS_i || items_{i+1} || nonce) < w$.
 \end{itemize}
 \end{mydef}
 

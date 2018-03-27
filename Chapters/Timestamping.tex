@@ -1,13 +1,13 @@
 \chapter{Timestamping}
 \label{chpr:timestamping}
-Placing a certain date on some data is surprisingly useful \cite{Haber91howto} \cite{Bayer93improvingthe} \cite{Massias99designof} \cite{OTSannouncment}.
-An inventor who had a patentable idea or a scientist who came to a relevant conlcusion may want to create a verifiable proof that at a certain moment they discovered something. This can help them to protect their intellectual property, proving others their precedence over competing claims.
+Placing a certain date on some data is surprisingly useful \cite{Haber91howto, Bayer93improvingthe, Massias99designof, OTSannouncment}.
+An inventor who had a patentable idea or a scientist who came to a relevant conclusion may want to create a verifiable proof that at a certain moment they discovered something. This can help them to protect their intellectual property, proving others their precedence over competing claims.
 In a communication protocol having the possibility to attach a certain time to messages can improve the security of the transmission. However it is often difficult to come to an agreement of which is the correct time to use, so different security models yield to different practical schemes.
 When storing documents in a third party cloud server, it could behave maliciously, for instance modifying their contents. Placing a certain and tamper resistant date on a document will make harder for the server provider to corrupt that file: the attacker should also be able to falsify the certificate stating the date. 
 
 Other practical applications of this technique are possible, however to have a complete understanding of the subject it is important to figure out which are its limits and which are the right choices to take to correctly put the concepts into practice. So we need to be a little more formal,
 \begin{mydef}
-	A timestamp is a proof that some data $d$ existed prior to time $t$
+	A timestamp is a proof that some data $d$ existed prior to time $t$.
 \end{mydef}
 To create such proof $d$ has to cause an event that could not have been generated without the existence of $d$. Such event it is binded to time $t$ and can be observed by others, we call its record \textit{time attestation}. So a proof consists in the data $d$, the set of \textit{operations} that were applied to cause the event and the time attestation.
 
@@ -31,35 +31,35 @@ For instance in the case of a sent letter, the input is the content of the lette
 
 Digital document are easier to tamper, but they could be defined in a more precise way, representing each document with bits. To take full advantage of this we need a formal definition,
 \begin{mydef}
-	a function $C:X \rightarrow Y$ is a commitment operation if given $x_1 \in X$ it is not feasible to compute $x_2 \in X$ s.t. $x_1 \neq x_2, C(x_1)=C(x_2)$
+	A function $C:X \rightarrow Y$ is a commitment operation if given $x_1 \in X$ it is not feasible to compute $x_2 \in X$ s.t. $x_1 \neq x_2, C(x_1)=C(x_2)$.
 \end{mydef}
 The property required is sometimes referred as second pre-image resistance. For practical purposes $X$, $Y$ can be thought as bit string spaces, its element can be seen as bit strings or another of their representations, for instance in hexadecimal digits or using a conventional encoding.
 The simplest examples are the append and prepend operations:
 
 \begin{myexample}
-	"hello" $\xrightarrow{\text{append("world")}}$ "helloworld"
+	\textquotedblleft hello\textquotedblright $\xrightarrow{\text{append(\textquotedblleft world\textquotedblright)}}$ \textquotedblleft helloworld\textquotedblright
 \end{myexample}
 It is impossible to change the input without changing the output: the output contains the input itself. In this example the function is a unary operation, since it takes only one input, however commitment operation may have more than one input:
 \begin{myexample}
-	"world", "hello" $\xrightarrow{\text{prepend()}}$ "helloworld"
+	\textquotedblleft world\textquotedblright, \textquotedblleft hello\textquotedblright $\xrightarrow{\text{prepend()}}$ \textquotedblleft helloworld\textquotedblright
 \end{myexample}
 Append and prepend have two problems: they reveal everything about the inputs and the size of the output is always greater than the size of the inputs. 
 
-Hiding the input of a commitment is often useful. For instance Robert Hooke \cite{Petroski96invention} in 1676 had formulated the spring law that will take his name. He wanted to prove that he knew that without revealing the law itself, so he published the latin anagram "ceiiinosssttuv". Later in 1678 he revealed the solution, "ut tensio, sic vis" ("as the extension, so the force"). However the anagram is not an optimal commitment operation: "ut vis, sic tensio" is a solution too. For that time it was an acceptable solution, the verification procedure had minimal requirements and there was no real incentive in lying. Nowadays better solutions are available, hence using an anagram will make the verifier suspicious.
+Hiding the input of a commitment is often useful. For instance Robert Hooke \cite{Petroski96invention} in 1676 had formulated the spring law that will take his name. He wanted to prove that he knew that without revealing the law itself, so he published the latin anagram \textquotedblleft ceiiinosssttuv\textquotedblright. Later in 1678 he revealed the solution, \textquotedblleft ut tensio, sic vis\textquotedblright (\textquotedblleft as the extension, so the force\textquotedblright). However the anagram is not an optimal commitment operation: \textquotedblleft ut vis, sic tensio\textquotedblright is a solution too. For that time it was an acceptable solution, the verification procedure had minimal requirements and there was no real incentive in lying. Nowadays better solutions are available, hence using an anagram will make the verifier suspicious.
 
 To address this problems cryptographic hash functions are used. Hash functions maps bit strings of arbitrary finite length into bit strings of fixed length \cite{Damgard:1989:DPH:118209.118248}. 
 \begin{mydef}
-	$h : \{ 0, 1 \} ^* \rightarrow \{ 0, 1 \} ^n $ is a hash function if it is computable in polynomial time in the length of the input
+	$h : \{ 0, 1 \} ^* \rightarrow \{ 0, 1 \} ^n $ is a hash function if it is computable in polynomial time in the length of the input.
 \end{mydef}
 We will refer at the input of such functions as preimage, and the output as hash value. The codomain is strictly contained in the domain hence the presence of collisions (pairs of inputs with identical outputs) is unavoidable. 
 To give to these functions a practical use some of the following properties are required
 \begin{mydef}
 	\label{hash-prop}
-	Let $h$ be a hash function
+	Let $h$ be a hash function, the following properties may hold:
 	\begin{itemize}
-		\item preimage resistance: given $h(x)$ it is not feasible to compute $x$
-		\item second-preimage resistance: given $x$ it is not feasible to compute $y$ s.t. $x \neq y$, $h(x)=h(y)$
-		\item collision resistance: it is not feasible to find $x, y$ s.t. $x \neq y$, $h(x)=h(y)$
+		\item preimage resistance: given $h(x)$ it is not feasible to compute $x$;
+		\item second-preimage resistance: given $x$ it is not feasible to compute $y$ s.t. $x \neq y$, $h(x)=h(y)$;
+		\item collision resistance: it is not feasible to find $x, y$ s.t. $x \neq y$, $h(x)=h(y)$.
 	\end{itemize}
 \end{mydef}
 
