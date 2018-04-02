@@ -13,7 +13,7 @@ Bitcoin is an electronic payment system based on cryptography rather than trust.
 Coins doesn't have to be managed individually, they can be combined and split in transactions containing multiple inputs and outputs. The last output appended to a coin is said unspent transaction output, UTXO.
 
 However who receives a transaction cannot verify that who pays him did not \textit{double-spend} the coin. 
-To prevent this behaviour it is needed a system to agree on a single history of the order in which the transactions were received. The proposed solution starts with a timestamp server: each timestamp it's a hash of a \textit{block} which contains a set of items and the previous timestamp (if there is one). The resulting data structure forms a chain, which is sometimes referred with the (at the moment of writing) overhyped term \textit{blockchain}. 
+To prevent this behaviour it is needed a system to agree on a single history of the order in which the transactions were received. The proposed solution starts with a timestamp server: each timestamp it's a hash of a \textit{block} which contains a set of items and the previous timestamp (if there is one). The resulting data structure forms a chain, which is often referred to as \textit{blockchain}\footnote{In \cite{Nakamoto_bitcoin:a} it is referred as block chain, later the term blockchain became used regularly. However, as of writing, such term is associated with an excessive hype which is misguiding the technological development.}. 
 \begin{equation}
 	TS_i =
 	\begin{cases} 
@@ -21,15 +21,15 @@ To prevent this behaviour it is needed a system to agree on a single history of 
 		h(TS_{i-1} || items_i) & i=1, ..., i_{max} 
 	\end{cases}
 \end{equation}
-To implement a \textit{distributed} version of a timestamp server it is used a \textit{proof-of-work} (PoW) system similar to Adam Back's Hashcash \cite{Back02hashcash-}. The proof-of-work consist in scanning for a value (called \textit{nonce}) to be included in the block that when hashed produces an hash value (interpreted as an integer) less then a given target $w$ as pointed in Definition \ref{pow}.
+To implement a \textit{distributed} version of a timestamp server it is used a \textit{proof-of-work} (PoW) system similar to Adam Back's Hashcash \cite{Back02hashcash-}. The proof-of-work consists in scanning for a value (called \textit{nonce}) to be included in the block that when hashed produces an hash value (interpreted as an integer) less then a given target $w$ as pointed in Definition \ref{pow}.
 
-\begin{mydef}{\textit{proof-of-work}}
+\begin{mydef}The {\textit{proof-of-work}} consists in:
 \label{pow}
 \\
 \textbf{given}:
 \begin{itemize}
 	\item previous timestamp $TS_{i-1} \in \{0,1\}^n$;
-	\item items to timestamp $items^i \in \{0,1\}^*$;
+	\item items to timestamp $items_i \in \{0,1\}^*$;
 	\item target to beat $w>0$;
 \end{itemize}
 \textbf{find}:
@@ -38,7 +38,7 @@ To implement a \textit{distributed} version of a timestamp server it is used a \
 \end{itemize}
 \end{mydef}
 
-The proof of work is basically finding partial hash collisions for the leading zero bits. Hash functions such SHA256 are designed in a way that the fastest algorithm for computing partial collisions is brute force. Thus finding a solution to the challenge is computationally expensive, in other words finding a soltution proves that CPU time was consumed and energy was destroyed for that purpose.
+The proof-of-work is basically finding partial hash collisions for the leading zero bits. Hash functions such SHA256 are designed in a way that the fastest algorithm for computing partial collisions is brute force. Thus finding a solution to the challenge is computationally expensive, in other words finding a solution proves that CPU time was consumed and energy was expended for that purpose.
  
 If the hash function has a sufficiently large codomain, it can be, in practice, arbitrarily hard to find a solution. For instance consider SHA256, the codomain is $\{0,1\}^{256} \approx \mathbb{Z}_{2^{256}}$, assuming that its outputs have the same probabilities, the chance that a given $nonce$ has hash value less then the target is $\frac{w}{2^{256}}$.  
 If $w=1$ the proof-of-work is finding a pre-image of 0 (with additional constraints) but that is not feasible thanks to its preimage resistance property. 
@@ -78,26 +78,26 @@ The tie will be broken when the next solution is found: one chain will have more
 Reorgs greater than one block may happen, but with exponentially decreasing probabilities, given that the majority of the nodes does not collaborate to behave maliciously; for practical purposes a transaction is considered \textit{confirmed} after 6 blocks are appended to the block including the transaction.
 
 By convention the first transaction in a block is a special transaction that starts a new coin owned by the creator of the block, called \textit{coinbase}.
-It provides an \textit{incentive} to the nodes performing the proof-of-work and provides a way to initially distribute coins into circulation, since there is no central authority to issue them.
-This minting procedure mimes gold extraction: instead of expending resources to add gold to circulation, in this case CPU time and energy is consumed to bring to light new coins. 
-Actually nodes with few computational resources can decide that their chances to find a solution are too low for even trying, thus only some nodes will attempt to solve the proof-of-work, following the previous analogy they are called \textit{miners}.
-The incentive can be also funded with \textit{transaction fees}, which are the difference between inputs and outputs amounts. Fees give a way for miners to prioritize transactions, higher fees will be preferred, they also provide an anti denial-of-service measure, for each spamming transaction the attacker has to spend a fee greater or equal then the some of the ones competing with it to get into a block.
+It provides an \textit{incentive} to the nodes performing the proof-of-work and a way to initially distribute coins into circulation, since there is no central authority to issue them.
+This minting procedure mimes gold extraction: instead of expending resources to add gold to circulation, in this case CPU time and energy are consumed to bring to light new coins. 
+Actually nodes with few computational resources can decide that their chances to find a solution are too low to even try, thus only some nodes will attempt to solve the proof-of-work, following the previous analogy they are called \textit{miners}.
+The incentive can be also funded with \textit{transaction fees}, which are the difference between inputs and outputs amounts. Fees give a way for miners to prioritize transactions, higher fees will be preferred; in addition they also provide an anti denial-of-service measure, for each spamming transaction, the attacker has to spend a fee greater or equal than some of the ones competing with it to get into a block.
 The incentive may help encourage nodes to stay honest. 
 A miner with enough computational power can defraud people by sending them coins and then rollback the transactions extending another chain not containing such transaction. 
-However this undermine the system, people won't use it to send payments and the coins will loose their value, damaging its own wealth.
+However this undermines the system, people won't use it to send payments and the coins will loose their value, damaging the attacker own wealth.
 He ought to find more profitable to play by the rules, contributing to increase the security of transactions and, as a consequence, of the value of the coins.
 
-If the majority of the miners does not collaborate to attack the network, the nodes reach consensus over the state coins. The chain with the most work contains the history of all transactions, giving all the information to retrieve which are the coins that have not been spent, the UTXO set, and to check that no extra coin was created outside the network minting rules.
+If the majority of the miners does not collaborate to attack the network, the nodes reach consensus over the state of the coins. The chain with the most work contains the history of all transactions, giving all the information to retrieve which are the coins that have not been spent, the UTXO set, and to check that no extra coin was created outside the network minting rules.
  
 The result is surprising, in the network each node has an arbitrary behaviour, it may go offline, send false message, lie and attack other nodes. A node with this behaviour is called Byzantine \cite{Wattenhofer:2016:SB:3002702}, otherwise is called honest; 
 finding consensus in a network with Byzantine nodes is called Byzantine agreement.
-Bitcoin combines cryptography, proof-of-work and a economic incentive to create a system that comes to a Byzantine agreement. 
-The key aspect is that the economic incentive is given with the same digital asset the the system is securing; if the economic incentive was unrelated to the system miners may start to behave maliciously.
-Although is often misunderstood, the technology underlying Bitcoin is not suitable to come to a Byzantine agreement on arbitrary subjects aside from the history of the coins only. It is possible to build a system upon Bitcoin but it would require another layer of consensus.
+Bitcoin combines cryptography, proof-of-work and an economic incentive to create a system that comes to a Byzantine agreement. 
+The key aspect is that the economic incentive is given through the same digital asset the system is securing; if the economic incentive was unrelated to the system, then miners may start to behave maliciously.
+Although it is often misunderstood, the technology underlying Bitcoin is not suitable to come to a Byzantine agreement on arbitrary subjects aside from the history of the coins. It is possible to build such a system upon Bitcoin but it requires another layer of consensus.
 
-Nodes in the network must agree on a common set of rules, including which is \textit{genesis block} and whether a transaction is valid. The rules define the consensus, which in turn defines the chain. If a set of nodes follow different consensus rules the network will split in two networks with different chains. If the two networks share the genesis block and a part of the chain, then it is called a \textit{fork}. We call the set of consensus rules followed by the Bitcoin network \textit{Nakamoto consensus}, however to properly address fork issues a further specification may be necessary. 
+Nodes in the network must agree on a common set of rules, including which is the initial block and whether a transaction is valid. The rules define the consensus, which in turn defines the chain. If a set of nodes follows different consensus rules the network will split into two networks with different chains. If the two networks share the genesis block and a part of the chain, then it is called a \textit{fork}. We call the set of consensus rules followed by the Bitcoin network \textit{Nakamoto consensus}, however to properly address fork issues a further specification may be necessary. 
 
-The size of the block may be excessive for some purposes, to save space the transactions are packed in Merkle tree, which is committed along with other items is committed in the \textit{block header} which is described in Table \ref{tab:block-header} taken from \cite{BitcoinDev}.
+The size of a block is excessive for some purposes, to save space the transactions are packed in a Merkle tree;its root, along with other items, is committed in the \textit{block header} which is described in Table \ref{tab:block-header} taken from \cite{BitcoinDev}.
 
 \begin{table}
 \begin{center}
@@ -115,11 +115,10 @@ The size of the block may be excessive for some purposes, to save space the tran
 \caption[Bitcoin block header structure.]{Bitcoin block header structure.}
 \label{tab:block-header}
 \end{table}
-The previous block header hash is a timestamp of the previous block, this ensures no previous block can be changes without also changing this block header.
+The previous block header hash is a timestamp of the previous block, this ensures no previous block can be changed without also changing this block header.
 The presence of the Merkle root ensures that every transaction in a block cannot be changed without modifying the header.
-The inclusion of the time is a peculiarity of Nakamoto consesus, it may be absent in other chains following different rules. 
-Still miners can set a arbitrary time, if they will to risk and they fall inside the rules of consensus: time set must be strictly greater than the median time of the previous 11 blocks morover nodes won't accept blocks with headers more than two hours in the future according to their clock. 
-The nBits field encodes the target, which is set in order to have expected time to mine a block equal to 10 minutes. If the average time to mine the previous block is less than 10 minutes the difficulty increase, otherwise it decreases. This difficulty adjustment happens every 2016 blocks and use the time field to compute the time interval to mine those blocks.
+The inclusion of the time is a peculiarity of Nakamoto consesus, it may be absent in other chains following different rules; still miners can set a arbitrary time, if they will to risk and they fall inside the rules of consensus: time set must be strictly greater than the median time of the previous 11 blocks moreover nodes won't accept blocks with headers more than two hours in the future according to their clock. 
+The nBits field encodes the target, which is set in order to have expected time to mine a block equal to 10 minutes. If the average time to mine the previous block is less than 10 minutes the difficulty increase, otherwise it decreases. The difficulty adjustment happens every 2016 blocks and use the time field to compute the time interval to mine those blocks.
 If all the 32-bit values of the nonce are tested, other fields can be changed, provided that the consensus rules are respected. Time can be updated, the Merkle root can be changed by reordering, modifying or substituting transactions. 
 
 Dropping version and the target nBits for a lighter and more essential notation we can update the chain description in (\ref{chain-nonce}):
@@ -142,20 +141,20 @@ h(TS_{i-1}||MR_{TX}^i||t_i||nonce_i) & i=1, ..., i_{max}
 
 The first block, called \textit{genesis block}, cannot include a previous timestamp, the field is set to $\{0\}^{256}$. The block include in the coinbase transaction the headline of The Times:
 \begin{quotation}
-"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
+\textquotedblleft The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\textquotedblright 
 \end{quotation}
 It proves that the hash was computed after that newspaper was distributed. 
 Since each block is a commitment of the previous block, every block is a commitment to the headline inserted by Nakamoto.
 
-Every bitcoin owner \textit{without trusting other users} can broadcast \textit{without any permission} a transaction to the network, a miner include it in a new block which is appended to the chain or, in other words, it will be timestamped. Every network full node stores an entire copy of the chain to ensure the correctness of all bitcoin transactions ever made, thus the timestamp attestations are \textit{widely published}.  
+Every bitcoin owner \textit{without trusting other users} can broadcast \textit{without any permission} a transaction to the network, a miner will include it in a new block which is appended to the chain or, in other words, it will be timestamped. Every network full node stores an entire copy of the chain to ensure the correctness of all bitcoin transactions ever made, thus the timestamp attestations are \textit{widely published}.  
 
-Assuming the majority of the nodes does not collaborate to attack the network the cost of rewriting past blocks in the chain grows exponentially, making de facto impossible to change the chain. For this reason, provided not considering the very last blocks, the chain is said to be \textit{immutable}. 
+Assuming the majority of the nodes does not collaborate to attack the network, the cost of rewriting past blocks in the chain grows exponentially, making de facto impossible to change the chain. For this reason, provided not considering the very last blocks, the chain is said to be \textit{immutable}. 
 
 Thus the Bitcoin network is a decentralized, trustless, permissionless notary. Its attestations are stored in a widely published and immutable timestamps chain, which defines the network (and vice versa). 
 
 Bitcoin does something more than timestamping, Nakamoto consensus ensures that each UTXO is spent only once, thus to publish a transaction on the chain is necessary to follow the consensus rules. 
 Anyway while playing in the consensus framework it's still possible to write arbitrary data inside a transaction.
-As a premise note that a valid transaction can be mined, but not all valid transactions are relayed by nodes. To strengthen the network and the resilience of nodes only \textit{standard} transactions are relayed. This is a common practice between nodes, not a consensus rule, it may be changed if new useful transaction types are proposed. By the time of writing the standard transactions are:
+As a premise note that a valid transaction can be mined, but not all valid transactions are relayed by nodes, indeed to strengthen the network and the resilience of nodes only \textit{standard} transactions are relayed. This is a common practice between nodes, not a consensus rule, it may be changed if new useful transaction types are proposed. By the time of writing the standard transactions are:
 \begin{itemize}
 	\item Pay-to-Public-Key (P2PK)
 	\item Pay-to-Public-Key-Hash (P2PKH)
@@ -194,11 +193,11 @@ Even though is a viable and working solution this technique should be avoided, t
 
 % script op code
 \section{OP\_RETURN}
-To solve the UTXO bloat problem, with the Bitcoin Core 0.9.0 release, a new script opcode, OP\_RETURN. An OP\_RETURN change creates a \textit{provably-prunable} output, with script pubkey:
+To solve the UTXO bloat problem, with the Bitcoin Core 0.9.0 release, a new script opcode, OP\_RETURN, was introduced. An OP\_RETURN change creates a \textit{provably-prunable} output, with script pubkey:
 \begin{verbatim}
 OP_RETURN <Data>
 \end{verbatim}
-Such output is provably unspendable, thus it will probably have zero bitcoin locked in, unless used for \textit{proof-of-burn}. The data field can be at most 80 bytes of arbitrary data. 
+Such output is provably unspendable, thus it will probably have zero bitcoin locked in, unless used for proof-of-burn. The data field can be filled with at most 80 bytes of arbitrary data. 
 
 OP\_RETURN is used for different purposes, writing raw data on the chain, adding information related to assets linked to a coin or timestamping. Sometimes the data field starts with a prefix indicating if a second layer protocol is being used \cite{DBLP:conf/fc/BartolettiP17}. 
 
