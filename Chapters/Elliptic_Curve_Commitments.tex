@@ -1,10 +1,10 @@
 \chapter{Elliptic Curve Commitments}
 \label{chpr:ec-commitments}
-Elliptic Curve Cryptography is used in Bitcoin and in similar systems to secure the transactions. 
+Elliptic curve cryptography is used in Bitcoin and in similar systems to secure the transactions. 
 We will give a brief overview of this cryptosystem, then we show how a elliptic curve points can be a commitment, finally we describe the consequent practical timestamping applications with Bitcoin.  
 
 \section{Elliptic Curve Public Key Cryptosystem}
-We start with a general definition taken from \cite{Koblitz1987}\footnote{see Appendix \ref{app:A} for a more basic approach.},
+We start with a general definition taken from \cite{Koblitz1987}\footnote{See Appendix \ref{app:A} for a more basic approach.},
 \begin{mydef}
 	An elliptic curve $E_K$ defined over a field $K$ of characteristic $\neq 2, 3$ is the set of solutions $(x,y)\in K^2$ to the equation
 	\begin{equation}
@@ -80,7 +80,7 @@ h = 1
 With this curve some calculation becomes more efficient, like computing the modular square root ($\sqrt{x}=x^{\lfloor\frac{p+1}{4}\rfloor}\textmd{ mod }p$) and the modular inverse ($x^{-1}=x^{p-2}\textmd{ mod }p$).
 
 Looking at the generator above one may think that to store an elliptic curve point is necessary to use 32 bytes for the $x$-coordinate and 32 bytes for the $y$-coordinate. 
-However it is not necessary to use all that space, infact it is possible to take advantage of the elliptic curve equation. Suppose $x \in \mathbb{F}_p$ is the $x$-coordinate of a point, then $y$ is given by $y^2 = x^3 + ax + b \quad \text{mod }n$, which, for $n$ prime, has exactly two solutions in $\mathbb{F}_p$, $y$ and $n-y$, one is odd and the other is even.
+However it is not necessary to use all that space, infact it is possible to take advantage of the elliptic curve equation. Suppose $x \in \mathbb{F}_p$ is the $x$-coordinate of a point, then $y$ is given by $y^2 = x^3 + ax + b \quad \text{mod }p$, which, for $p$ prime, has exactly two solutions in $\mathbb{F}_p$, $y$ and $p-y$, one is odd and the other is even.
 The solutions are easily computable thanks to the above formula.
 Having consider this, to store an elliptic curve point $P$ one can store $P_x$ and the parity of $P_y$. 
 In Bitcoin the compressed encoding of a point $P$ is given by a byte for the parity of $P_y$ ($02$ if even, $03$ if odd) followed by the bytes representing $P_x$, for instance the generator $G$ is encoded as follows:
@@ -112,21 +112,35 @@ Let's analyse how this new commitment operations are structured.
 \begin{proof}
 	First we show a direct proof that works when $P$ (or $P'$) is fixed then we show the general proof.
 	\\
-	Let $C(m,P)$ be a commitment to $m, P$.
-	$\forall P' \in E_{\mathbb{F}_p}$ the problem is to find $m' \in \{0,1\}^*$ s.t. $C(m,P)=C(m',P')$ and $(m', P') \neq (m, P)$. We want to show that such problem is unfeasible.
-	The substitute value $m'$ needs to satisfy $h(m'||P')G + P'=C(m,P)$.
+	Let $m,P$ and $C(m,P)$ be fixed.
+	%Let $C(m,P)$ be a commitment to $m, P$.
+	$\forall P' \in E_{\mathbb{F}_p}$ the problem is to find $m' \in \{0,1\}^*$ s.t. $C(m,P)=C(m',P')$ and $(m', P') \neq (m, P)$. 
+	We want to show that such problem is unfeasible.
+	$m'$ satisfies $h(m'||P')G + P'=C(m,P)$.
+	%The substitute value $m'$ needs to satisfy $h(m'||P')G + P'=C(m,P)$.
 	Let $x$ be such that $xG = C(m,P) - P'$, with $0\leq x<n$. 
 	%so $x=h(P'||m')\textmd{ mod }n$. The problem to find a second preimage $m'$ of $x$.
-	Define $h_{P'}$ as follows:
+	Let $h_{P'}$ be defined as follows:
 	\begin{equation}
 	\begin{split}
 	h_{P'}:\{0,1\}^* & \rightarrow \{0,1\}^k\\
 	m' & \mapsto h(m'||P')
 	\end{split}
 	\end{equation}
-	Let $I_x=\{h \in \{0,1\}^k \approx \mathbb{Z}_{2^k} | h=x\textmd{ mod }n\}$ be the set of images of $h_{P'}$ suitable to find a second-preimage.
-	$I_x$ contains  $\lceil\frac{2^k}{n}\rceil$ or $\lfloor\frac{2^k}{n}\rfloor$ elements.
-	Hence to find a second-preimage one needs to find $m'$ s.t. $h_{P'}(m') \in I_x$. Note that $h_{P'}$ is second-preimage resistant, since it is the composition of two function with that property, $prepend(P')$ and $h$. Finally, if $n \approx 2^k$, the elements in $I_x$ are few (eventually a single one), thus finding $m'$ is unfeasible because $h_{P'}$ is second-preimage resistant.
+	Consider the elements in $\{0,1\}^{k}$ equivalent to $x$ modulo $n$, namely $I_x=\{h \in \{0,1\}^k \approx \mathbb{Z}_{2^k} | h=x\textmd{ mod }n\}$.
+	%Let $I_x=\{h \in \{0,1\}^k \approx \mathbb{Z}_{2^k} | h=x\textmd{ mod }n\}$ be the set of images of $h_{P'}$ suitable to find a second-preimage.
+	Note that:
+	\begin{equation}
+		|I_x|=\begin{cases}
+				\lceil\frac{2^k}{n}\rceil & \textmd{if } x\geq n \\
+				\lfloor\frac{2^k}{n}\rfloor & \textmd{if } x< n
+		      \end{cases}
+	\end{equation}
+	The problem is finding $h_{p'}(m')\in I_x$.
+	Note that $h_{p'}$ is second-preimage resistant, since it is the composition of two functions with that property, $prepend(P')$ and $h$.
+	Finally, if $n \approx 2^k$, the elements in $I_x$ are few (eventually a single one), thus finding $m'$ is unfeasible because $h_{P'}$ is second-preimage resistant.
+	%$I_x$ contains  $\lceil\frac{2^k}{n}\rceil$ or $\lfloor\frac{2^k}{n}\rfloor$ elements.
+	%Hence to find a second-preimage one needs to find $m'$ s.t. $h_{P'}(m') \in I_x$. Note that $h_{P'}$ is second-preimage resistant, since it is the composition of two function with that property, $prepend(P')$ and $h$. Finally, if $n \approx 2^k$, the elements in $I_x$ are few (eventually a single one), thus finding $m'$ is unfeasible because $h_{P'}$ is second-preimage resistant.
 	\\
 	Now consider the case in which $P$ is not fixed.
 	Suppose we are able to find $x$ s.t. $P=xG$, the map $C$ can be seen as $m,x \mapsto x + h(xG||m)$ which is basically $m,x \mapsto x + \tilde{h}(x,m)$ for an opportune $\tilde{h}$.
@@ -135,15 +149,15 @@ Let's analyse how this new commitment operations are structured.
 	Hence we conclude that the map is a random oracle which gives second preimage resistance.
 \end{proof}
 
-The order $n$ has to be large so that $E_{\mathbb{F}_p}$ is rich enough to make the ECDLP intractable and to avoid shrinking the hash function codomain. Fixed $n$ the choice of $k$ should be made properly: if it is too low $h$ will be too weak, if it is too high, $|I_x|$ will increase, weakening $C$. Hence a good compromise is choosing $n$ the closest possible.
+The order $n$ has to be large so that $E_{\mathbb{F}_p}$ is rich enough to make the ECDLP intractable and to avoid shrinking the hash function codomain. Fixed $n$ the choice of $k$ should be made properly: if it is too low $h$ by itself will be too weak, if it is too high, $|I_x|$ will increase, weakening $C$. Hence a good compromise is choosing $n$ the closest possible to $2^k$.
 
-The security of the commitment is given by the security of the hash function, and does not rely on the intractability of the ECDLP. Being able to compute the private key from the commitment is not enough to compute a second input committing to the same point, to do so is necessary to able to invert the hash function.
+The security of the commitment is given by the security of the hash function, and does not rely on the intractability of the ECDLP. Being able to compute the private key from the commitment is not enough to compute a second input committing to the same point, to do so is necessary to able to find a second-preimage to an hash value.
 
-With this commitment an elliptic curve point used for one purpose can be tweaked and, while still serving for the previous purpose, it can be a commitment to a value $m$. In fact suppose $x$ is the private key of $P$, $P=xG$, then $C(m,P)=(h(P||m)+x)G$. So the new private key is $(h(P||m)+x) (\textmd{mod } n)$ and, since $x$ is secret and $h(P||m)$ is a constant value, the resulting key is still secret.
+With this commitment an elliptic curve point used for one purpose can be tweaked with $h(P||m)$ and, while still serving for the previous purpose, it can be a commitment to a value $m$. In fact suppose $x$ is the private key of $P$, $P=xG$, then $C(m,P)=(h(P||m)+x)G$. So the new private key is $(h(P||m)+x) \textmd{mod } n$ and, since $x$ is secret and $h(P||m)$ is a constant value, the resulting key is still secret.
 So each time a elliptic curve point is written, we can encapsulate in it a commitment to an arbitrary value.
 This technique may be extended to more general cases, but we will treat only the case of elliptic curves.
 
-Several hash functions and elliptic curves can be used, since we want to construct a working application on Bitcoin we will focus an a particular case with $h=$ SHA256 and $E_{\mathbb{F}_p}=secp256k1$ since Bitcoin itself relies on the assumption that this hash function and this elliptic curve are not broken, moreover the order of the curve $n$ is extremely close\footnote{The set of suitable images has cardinality 1 or 2, particularly the probability to choose an element with 2 possible images $1-\frac{n}{2^{256}}\approx10^{-33}$ which is almost zero.} 
+Several hash functions and elliptic curves can be used, since we want to construct a working application on Bitcoin we will focus an a particular case with $h=$ SHA256 and $E_{\mathbb{F}_p}=secp256k1$ since Bitcoin itself relies on the assumption that this hash function and this elliptic curve are not broken, moreover the order of the curve $n$ is extremely close\footnote{Assuming that a generic output $x$ of SHA256 is indistinguishable from a sampling from an uniform distribution in $\mathbb{Z}_{2^{256}}$, then $\mathbb{P}(x\geq n)=1-\frac{n}{2^{256}}\approx 10^{-33}$. So the chance to choose $(P||m)$ leading to $|I_x|=2$ is almost zero.} 
 to the cardinality of the hash function codomain $2^{256}$. This commitment operation is called \verb|OpSecp256k1Commitment|.
 
 Moreover to use the operation in a OpenTimestamp receipt it has to be an unary operation, hence it will take as input $P||m$ and will return the $x$-coordinate as output, both in bytes. More precisely it will operate as described in Algorithm \ref{alg:opsecp256k1}.
@@ -162,9 +176,9 @@ Moreover to use the operation in a OpenTimestamp receipt it has to be an unary o
 It can be used for several purposes, however, for this work, we focus only on timestamping.
 
 \section{Timestamping Applications}
-On the Bitcoin chain, elliptic curve points are used as public keys locking bictoins or as part of the signature. The first case lead to the \textit{pay-to-contract} technique, the second to \textit{sign-to-contract}. We will analyse both uses and we will explain which one should be preferred.
+On the Bitcoin chain, elliptic curve points are used as public keys locking bitcoins or as part of the signature. The first case lead to the \textit{pay-to-contract} technique, the second to \textit{sign-to-contract}. We will analyse both uses and we will explain which one should be preferred.
 
-This names owe their origin to the first application for which they were though, that was associating a \textit{contract} to an elliptic point. 
+This names owe their origin to the first application for which they were though, that was associating a \textit{contract} to an elliptic curve point. 
 The term contract may seem misleading, but it turns out to be useful dealing with \textit{sign-to-contract}, since it let us distinguish between the message signed and the contract committed.
 
 \subsection{\textit{pay-to-contract}}
@@ -187,7 +201,7 @@ sha256
 sha256
 verify BitcoinBlockHeaderAttestation(block)
 \end{verbatim} 
-In the case of P2PKH, the committed public key is hashed as shown in the following real example, where \verb|b'Pay to contract!'| is timestamped: 
+In the case of P2PKH, the committed public key is hashed as shown in the following real example, where \verb|b'Pay to contract!\n'| is timestamped: 
 \begin{Verbatim}[frame=single]
 File sha256: 47257ff8c07f55a2e697ab9d89e47b471f60ab3f6883ed05
              44561b2a39a26140
@@ -323,7 +337,7 @@ The idea of \textit{sign-to-contract}, exploited in Algorithm \ref{alg:ecdsa-s2c
 	\end{algorithmic}
 \end{algorithm}
 
-Let's examine a real timestamp for the data \verb|b'Sign to contract'| made with the described technique.
+Let's examine a real timestamp for the data \verb|b'Sign to contract\n'| made with the described technique.
 \begin{Verbatim}[frame=single]
 File sha256: dd60bcfecd023823efdcb8d8a5b04939111ef82dc1d674320
              7e164e5aab08844

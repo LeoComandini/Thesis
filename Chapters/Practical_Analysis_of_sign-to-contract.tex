@@ -4,11 +4,11 @@ We analysed what are the foundations of \textit{sign-to-contract} from a theoret
 Finally we show application developed by us that makes possible to create OpenTimestamps proofs with \textit{sign-to-contract}.
 
 \section{Benefits and Issues}
-The most relevant feature of \textit{sign-to-contract} is the \textbf{cost} reduction. Each user who is doing a bitcoin transaction can also timestamp with no additional costs, if the transaction is for purpose unrelated to that timestamp the cost is reduced to zero. Such timestamp may be used to prove the existence of an arbitrary high number of files, which does not have to come from the same user.
+The most relevant feature of \textit{sign-to-contract} is the \textbf{cost} reduction. Each user who is doing a bitcoin transaction can also timestamp with no additional costs, if the transaction purpose is unrelated to the timestamp, then the cost of timestamping is reduced to zero. Such timestamp may be used to prove the existence of an arbitrary high number of files, which does not have to come from the same user.
 
-Since it does not cost anything, someone may decide to include in the signature of one of his transactions the a commitment to the calendar Merkle tip (or, more generally, another aggregation of timestamp requests from a community of clients). 
+Since it does not cost anything, someone may decide to include in the signature of one of his transactions a commitment to the calendar Merkle tip (or, more generally, another aggregation of timestamp requests from a community of clients). 
 This is called \textit{external timestamping}.
-Then who did the transaction sends to the calendar the information to link the Merkle tip to the transaction.
+Then, who did the transaction sends to the calendar the information to link the Merkle tip to the transaction.
 Now the calendar has all the information to fulfil the timestamp requests from its clients.
 
 If a calendar receives several external timestamp proofs it will increase the timestamping \textbf{frequency}. Clients will have their proof completed in less time and, in some situations\footnote{Miners can always lie about the time they publish on the block, however each user may associate a time to the block header (slightly) different from the one included. For instance, someone running a full node can take note of the time when he first received from the network the block and associate that time to the block header; he is sure that the time he uses is correct for timestamping, since data was created before he received the block, but he will have hard times in convincing others.}, the timestamp can be considered more accurate.
@@ -29,10 +29,10 @@ In fact a \textit{sign-to-contract} transaction is indistinguishable from anothe
 \caption[Comparison between timestamping schemes.]{Comparison between timestamping schemes. extra bytes are computed considering RIPEMD160 for address commitment and SHA256 for OP\_RETURN.}
 \end{table}
 
-Alongside these benefits there are some issues that should be addressed.
-An external actor who is doing external timestamping for a calendar may include some arbitrary data embedded in the proof that he will send back to the calendar, who will include the received part in the complete proofs to distribute to clients. 
+Alongside these benefits, there are some issues that should be addressed.
+An external actor, who is doing external timestamping for a calendar, may embed some arbitrary data in the proof that he will send back to the calendar, who will include the received part in the complete proofs to distribute to clients. 
 However clients expect the calendar to send them clean proofs, if they receive timestamps which have been partially created by external actors they are exposed to new risks, they need to trust that who helped the calendar has not inserted malicious data, for instance virus activators. 
-This problem cannot be avoided entirely since \textit{sign-to-contract} proofs always contains arbitrary data by who generates the proof. Such issue could be limited by asking for proof with a strict format, for instance:
+This problem cannot be avoided entirely since \textit{sign-to-contract} proofs always contain arbitrary data by who generates the proof. Such issue could be limited by asking for proof with a strict format, for instance:
 \begin{verbatim}
 Timestamp: MT
 prepend R
@@ -43,12 +43,12 @@ append TX_a
 \end{verbatim}
 This limits the arbitrariness to only the transaction, in addition it could be limited even more by constraining the number and type of outputs and inputs.
 
-Another issue is the \textit{third party malleability}:
-if $(r,s)$ is a valid signature for $(P,m)$ then $(r,n-s)$ is a valid signature too. Once the a \textit{sign-to-contract} transaction is relayed a third party may change it using the above technique, if the new version is mined the timestamp proof must be changed\footnote{This happen with all commitment scheme passing through a non-segwit transaction.}.
+Another issue is \textit{third party malleability}:
+if $(r,s)$ is a valid signature for $(P,m)$ then $(r,n-s)$ is a valid signature too. Once the a \textit{sign-to-contract} transaction is relayed a third party may change it using the above technique, if the new version is mined the timestamp proof must be changed\footnote{This happens with all commitment schemes passing through a non-segwit transaction.}.
 %cit segwit source
 The malleability problem is solved with \textit{segregated witness} (\textit{segwit}) \cite{BIP141}, however this yield to another issue for \textit{sign-to-contract} proofs.
 With segwit two versions of a single transaction are considered. One without the signature (witness) and the other with, the former when hashed produce the TXID the latter the WTXID.
-The Merkle root in the block header is a commitment to all the TXIDs, while the WTXIDs are committed in another Merkle tree whose root is inserted in the coinbase transaction. So for a segwit transaction the witness is committed in the block header but the path until there crosses the WTXID Merkle tree, then the coinbase transaction and finally the TXID Merkle tree, as shown in Figure \ref{fig:s2c-segwit}. 
+The Merkle root in the block header is a commitment to all the TXIDs, while the WTXIDs are committed in another Merkle tree whose root is inserted in the coinbase transaction. So for a segwit transaction the witness is committed in the block header, but the path until there crosses the WTXID Merkle tree, then the coinbase transaction and finally the TXID Merkle tree, as shown in Figure \ref{fig:s2c-segwit}. 
 This has two problems: the proof almost double in size (two Merkle tree must be traversed) and the miner may include malicious data in the coinbase. Those are not insuperable issues, still they cause some extra layers of complexity in the implementation.
 
 \begin{figure}
@@ -71,9 +71,12 @@ To run Electrum with the plugin it is necessary to use the library python-openti
 
 If one is familiar with Electrum code, and if the whole framework of \textit{sing-to-contract} is clear, the implementation is pretty straightforward.  We tried to be the less invasive as possible by using the hooks already present in the code and to keep, this, combined with the deliberate choice to make the code the simplest possible, lead to a suboptimal user experience. 
 The signature procedure mimic the standard one adopted by Electrum, the incomplete timestamp and the data necessary to create timestamps is stored in a json file to facilitate debug.
-Moreover we do not manage \textit{sign-to-contract} with segwit, since Electrum servers do not support an RPC to retrieve the Merkle path from a transaction with the witness to the coinbase and then to the block header Merkle root.
+Moreover we do not manage \textit{sign-to-contract} with segwit, since Electrum servers do not support an RPC to retrieve the Merkle path from a transaction with its witness to the coinbase and then to the block header Merkle root.
 
 In Figure \ref{fig:enable-plugin}, \ref{fig:s2c}, \ref{fig:tx-history} and \ref{fig:upgrade} we display few screenshot to give a taste of what the plugin look like.
+
+At this stage, where \verb|OpSecp256k1Commitment| is not yet part of the standard OpenTimestamps library, the plugin may help testing timestamping with elliptic curve commitments. 
+If and when the improvement proposal will be merged, after in-depth testing has been passed, we may ask to include the plugin in the standard release of Electrum.
 
 \begin{figure}
 	\begin{center}
@@ -110,7 +113,3 @@ In Figure \ref{fig:enable-plugin}, \ref{fig:s2c}, \ref{fig:tx-history} and \ref{
 		\label{fig:upgrade}
 	\end{center}
 \end{figure} 
-
-
-At this stage, where  the \verb|OpSecp256k1Commitment| is not yet part of the standard OpenTimestamps library, the plugin may help testing the timestamping with elliptic curve commitments. 
-If and when the improvement proposal will be merged, after in-depth testing has been passed, we may ask to include the plugin in the standard release of Electrum.

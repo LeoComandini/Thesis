@@ -1,19 +1,19 @@
 \chapter{State of the Art of Trustless Timestamping}
 \label{chpr:state-of-art}
 We analysed the reasons why Bitcoin chain is a valid tool to produce timestamps of arbitrary data and we showed two procedures to create such proofs.
-However each one may follow his own set of rules to create formalize proofs. 
+However each one may follow his own set of rules to create and formalize proofs. 
 One can use a different set of commitment operations and time attestations or the same set but formalized in a different way, or even a mixture ot the preceding cases. 
 Although various set of rules may be valid and completely reasonable, such situation would be a nightmare for users, both creators and verifiers; during the creation procedure one may ask himself if challenger will retain his proof correctly formalized, verifiers should equip themselves with several tools increasing the cost of verifying proofs.
-In addition this settings has huge security issues: an higher number of accepted formalizations increases the surface of attack through which proofs may be corrupted. 
+In addition this setting has huge security issues: an higher number of accepted formalizations increases the surface of attack through which proofs may be corrupted. 
 
 Moreover Bitcoin chain is not the only place where to bind attestation in a trustless manner. 
 There are other similar technologies that can be used as a notary with analogous techniques, for instance Litecoin, Ethereum or MimbleWimble.
-Although timestamping with other chains is possible is fundamental to realize that it changes the security of the time attestations.
+Although timestamping with other chains is possible, it is fundamental to realize that it changes the security of the time attestations.
 Each chain has its own rules and its own community behind, in some settings some assumptions may be weaker or false, while in others they may be an improvement.
 For each specific case one should realize which is the best notary to use in order to properly address the problem.
 
 For these reasons is important to have a common an shared standard to agree on the format used to create timestamps. 
-Such standard should be open source to let everyone analyze its security and contribute to it with improvement proposals.
+Such standard should be open source to let everyone analyse its security and contribute to it with improvement proposals.
 
 In 2012 Peter Todd started working on \textit{OpenTimestamps} \cite{OTSWeb, OpenTimestampsGithub, OTSannouncment}, a project that provides a solutions to the above issues.
 
@@ -24,7 +24,7 @@ In 2012 Peter Todd started working on \textit{OpenTimestamps} \cite{OTSWeb, Open
 In the following years other developers contributed to the source code improving the standard with more libraries, features and implementations. 
 
 \section{OpenTimestamps as a Standard}
-OpenTimestamps defines a standard for creating a proof that can be verified in a easy way and that is not prone to inconsistent behaviours. The definition comes from the implementation, precisely from the python library which is currently taken as a reference by the other libraries.
+OpenTimestamps defines a standard for creating a proof that can be verified in an easy way and that is not prone to inconsistent behaviours. The definition comes from the implementation, precisely from the python library which is currently taken as a reference by the other libraries.
 Proofs consist in a sequence of commitment operations heading to at least one time attestation. 
 
 Commitment operations take one (unary) or two (binary) inputs to produce a single output. Note that a binary operation can be turned in a unary operation by fixing one of the inputs. The available operations are:
@@ -129,7 +129,9 @@ verify BitcoinBlockHeaderAttestation(358391)
 \end{Verbatim}
 The recepit is attesting that the file whose hash is \verb|03ba204e...| is committed into the block header number 358391, which as the \verb|nTime| field set to \verb|"May 28, 2015, 17:41:18 +0200"|. This means that the file existed prior to that time, still this is not completely safe: we are assuming that the miner has not lied \cite{TimeInaccuracy}. However he cannot put an extremely different date and he does not have a great incentive to put a false timestamp, nevertheless, to stay safe, we say that the data contained in the file existed prior to May 28, 2015.
 
-This timestamped was created with an address commitment, to clarify how it is committed in the chain in Table \ref{tab:ots-ex} it is shown the receipt execution:
+This timestamp was created with an address commitment, to clarify how it is committed in the chain in Table \ref{tab:ots-ex} it is shown the receipt execution.
+At the end, the value remaining on the stack is tested against the transaction Merkle root of block 358391. 
+If they are equal the proof is correct.
 
 \begin{table}
 \begin{center}
@@ -151,8 +153,6 @@ This timestamped was created with an address commitment, to clarify how it is co
 \caption[OpenTimestamp receipt execution.]{OpenTimestamp receipt execution.}
 \label{tab:ots-ex}
 \end{table}
-At the end the value remaining on the stack is tested against the transaction Merkle root of block 358391. 
-If they are equal the proof is correct.
 The raw transaction of the example is:
 \begin{Verbatim}[commandchars=+\[\], frame=single]
 0100000001e482f9d32ecc3ba657b69d898010857b54457a90497982ff56f9
@@ -168,7 +168,7 @@ It can be decoded with the Bitcoin Core client with:
 \begin{verbatim}
 $ bitcoin-cli decoderawtransction <raw-transaction>
 \end{verbatim}
-Decoding the transaction one can see the commitment address\footnote{it is possible to verify that it is still unspent}:
+Decoding the transaction one can see the commitment address\footnote{It is possible to verify that it is still unspent.}:
 \begin{verbatim}
 13jUKAuPDfgVPVgsVbeKVNWBv6wAh31vkN
 \end{verbatim}
@@ -200,7 +200,7 @@ Moving forward from the example it is possible to define procedures to include t
 \Statex
 \Comment{$C$ to TXID}
 \State find the block $B$ including $TX$
-\State store the $B$ transaction Merkle roor $MR$ and height $H$
+\State store $B$ transactions Merkle root $MR$ and height $H$
 \State retrieve the Merkle path $S_{TXID}^{MR} \gets [C^{TXID}_i]_{i=1}^{n_{TXID}}$
 \Comment{TXID to $MR$}
 \State $proof \gets S_d^C + S_C^{TXID} + S_{TXID}^{MR}$ 
@@ -225,8 +225,8 @@ The procedures could be easily generalized to more general settings, for instanc
 It is important to highlight that the creator of the proof should always verify its correctness right after the creation. If the verification is successful he can store the file containing the proof in several insecure places, since it does not reveal anything more than the hash of the timestamped data, and store the file containing the data in a secure (if he needs) location; when challenged to prove the existence of that data prior to a certain time he will provide data and the corresponding timestamp to who he needs to convince.
 
 \section{OpenTimestamps as a Scalability Solution}
-As we have seen in the previous section to create a timestamp is necessary to do a transaction. 
-To timestamp multiple files is possible to commit those in a single hash value using a Merkle tree, as result, the initial part of each proof will have different operations, going through different branches of the tree, while from the transaction on the operations will be identical.
+As we have seen in the previous section, to create a timestamp is necessary to do a transaction. 
+To timestamp multiple files is possible to commit those in a single hash value using a Merkle tree, as result, the initial part of each proof will have different operations, going through different branches of the tree, while, from the transaction on, the operations will be identical.
 
 However each time one has to timestamp he has to do a bitcoin transaction, which is not sustainable if too many people have timestamp needs: it implies an effort for the network and higher fees for all the users.
 
@@ -244,7 +244,7 @@ Their working is descibed in Algorithm \ref{alg:calendar-working}.
 		\State aggregator sends back to clients incomplete proof until the tip
 		\State calendar aggregates pending tips in a merkle tree\Comment{aggregation}
 		\State calendar sends a transaction including a merkle tip\Comment{timestamp}
-		\State the transaction get confirmed\Comment{attestation complete}
+		\State the transaction gets confirmed\Comment{attestation complete}
 		\State clients ask to the calendar to upgrade the timestamp\Comment{upgrade}
 		\State calendar sends back clients the complete proofs
 		\State clients verify their proofs\Comment{verification}
@@ -253,7 +253,7 @@ Their working is descibed in Algorithm \ref{alg:calendar-working}.
 
 Clients do not send their data directly, instead they send the hash values of the data, so the aggregator does not dig into their privacy.
 At the first aggregation phase the aggregator append to each value received by clients a random nonce, so that a client sending malicious data instead of an hash do not pollute the proof of the leaf adjacent to him.
-This system is trust-minimized beacause the clients trust that the calendar will create timestamp for them. Both calendar and aggregator can censor them, sending back incorrect proofs or malicious data. However once the calendar has sent them a correct proof they are fine, the proof will be valid forever regardless of future bad behaviour of the aggregator or calendar.
+This system is trust-minimized beacause the clients trust that the calendar will create timestamp for them. Both calendar and aggregator can censor them, sending back incorrect proofs or malicious data. However once the calendar has sent them a correct proof they are fine, the proof will be valid forever regardless of any future bad behaviour of the aggregator or calendar.
 
 The OpenTimestamp standard support multiple branch for the commitment operations to include multiple attestations inside a single proof. With this feature one request can be forwarded to multiple public calendars, giving the redundancy that mitigates the problem when a calendar server is down.
 
@@ -265,13 +265,14 @@ The OpenTimestamp standard support multiple branch for the commitment operations
 	\end{center}
 \end{figure}
 
-A calendar spend its own bitcoin to do a transaction, this implies that he won't be able to perform an extremely high number of transactions, leading to less frequent timestamps. As of writing the calendars use the \textit{replace by fee} (\textit{RBF}) mechanism to spend a fix amount of bitcoin each day. In Algorithm \ref{alg:calendar-rbf} is described a simplified scheme of its working.
-This procedure makes the calendar expenditures fixed: each day has approximately 144 block, so the amount spent in fee per day is $144 \cdot a$.
+A calendar spends its own bitcoin to do a transaction, this implies that he won't be able to perform an extremely high number of transactions, leading to less frequent timestamps. As of writing, the calendars use the \textit{replace by fee} (\textit{RBF}) mechanism to spend a fix amount of bitcoin each day. In Algorithm \ref{alg:calendar-rbf} is described a simplified scheme of its working.
+This procedure makes the calendar expenditures fixed: each day has approximately 144 block, so the amount spent in fee per day is $144 \cdot a$, where $a$ is a fixed value set by who run the calendar.
 
-Thus if the mean fees to get into athe next block are high the calendar may wait for long periods before timestamping, clients will have to wait for a long time to have their receipt upgraded and their data timestamped. This issue can be addressed if someone is timestamping instead of the calendar, which could be facilitated by the technique we are showing in Chapter \ref{chpr:ec-commitments}. 
+Thus if the mean fee to get into the next block is high, then the calendar may wait several blocks before timestamping and clients will have to wait for a long time to have their receipt upgraded and their data timestamped. This issue can be addressed if someone is timestamping instead of the calendar, which could be facilitated by the technique we are showing in Chapter \ref{chpr:ec-commitments}. 
 
 Despite all these considerations the existence of public calendars is a extremely remarkable achievement for users: they enable clients to timestamp completely for free their own data. 
-The solution involves some trust, but for a limited interval of time and with minimal possible downsides; once the proof is completed it is not important if it was created through a central hub, it has the exact same respectability of any other proof, furthermore the calendar learned nothing about the data timestamped since it received only an hash value. 
+The solution involves some trust, but for a limited interval of time and with minimal possible downsides; once the proof is completed, it is not important if it was created through a central hub, it has the exact same respectability of any other proof. 
+Furthermore the calendar learned nothing about the data timestamped since it received only an hash value. 
 Ultimately the efficient aggregation reduce the burden caused to the network, making timestamping sustainable even on large scale.
 
 \begin{algorithm}
