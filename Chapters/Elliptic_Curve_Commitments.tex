@@ -166,7 +166,7 @@ Let's analyse how this new commitment operations are structured.
 	\begin{equation*}
 	\begin{split}
 	\hat{C} : \{0,1\}^* \times \mathbb{Z}_n  & \rightarrow \mathbb{Z}_n \\
-	m, x & \mapsto (H(xG||m)G + x)\textmd{ mod }n
+	m, x & \mapsto (H(xG||m) + x)\textmd{ mod }n
 	\end{split}
 	\end{equation*}
 	We show that $\hat{C}$ can be used as a random oracle.
