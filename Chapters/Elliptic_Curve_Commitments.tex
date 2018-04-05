@@ -1,7 +1,7 @@
 \chapter{Elliptic Curve Commitments}
 \label{chpr:ec-commitments}
 Elliptic curve cryptography is used in Bitcoin and in similar systems to secure the transactions. 
-We will give a brief overview of this cryptosystem, then we show how a elliptic curve points can be a commitment, finally we describe the consequent practical timestamping applications with Bitcoin.  
+We will give a brief overview of this cryptosystem, then we show how an elliptic curve point can be a commitment, finally we describe the consequent practical timestamping applications with Bitcoin.  
 
 \section{Elliptic Curve Public Key Cryptosystem}
 We start with a general definition taken from \cite{Koblitz1987}\footnote{See Appendix \ref{app:A} for a more basic approach.},
@@ -11,7 +11,7 @@ We start with a general definition taken from \cite{Koblitz1987}\footnote{See Ap
 	\label{ec-eq}
 	y^2 = x^3 + ax + b, \quad a,b \in K
 	\end{equation}
-	together with a "point at infinity" $\mathcal{O}$.
+	together with a \textquotedblleft point at infinity\textquotedblright $\mathcal{O}$.
 \end{mydef}
 $\mathcal{O}$ is the projective closure of (\ref{ec-eq}) and may not be described in terms of two coordinates in $K$.
 The points on $E_K$ form a group with identity element the point at infinity. The negative point $P \in E_K$ is the second point on $E_K$ having the same $x$-coordinate as $P$. Let $P_1=(x_1,y_1)$ and $P_2=(x_2,y_2)$ be two points on the curve, their sum $P_3=(x_3,y_3) = P_1 + P_2$ is given by:
@@ -30,7 +30,7 @@ This \textit{addition} operation for elliptic curve points has a geometric inter
 
 Using these formulae, one can compute a multiple $mP$ of a given point $P$ in polynomial time by means of $O(\log m)$ doubling and additions, e.g. $11P = P + 2(P + 2(2P))$. This operation is called \textit{scalar multiplication}.
 
-In cryptography most applications use finite fields, in particular a finite field contains $p^m$ elements with $p$ prime and $m \geq 1$. We will confine ourselves to the case $m=1$. So let $K=GF(p)=\mathbb{F}_p =\mathbb{Z}_p  = \{0, 1, ..., p-1\}$, $K$ is a finite field, the points of $E_K$, toghether with the addition operation defined above, form a finite Abelian group. The ellptic curve becomes:
+In cryptography most applications use finite fields, in particular a finite field contains $p^m$ elements with $p$ prime and $m \geq 1$. We will confine ourselves to the case $m=1$. So let $K=GF(p)=\mathbb{F}_p =\mathbb{Z}_p  = \{0, 1, ..., p-1\}$, $K$ is a finite field, the points of $E_K$, together with the addition operation defined above, form a finite Abelian group. The elliptic curve becomes:
 %cyclic or product of two cyclic groups
 \begin{equation}
 E_{\mathbb{F}_p}=\{(x,y)\in \mathbb{F}_p^2 \quad \textmd{s.t. }
@@ -48,8 +48,8 @@ Computing the isomorphism from $\mathbb{Z}_n$ to $\langle G \rangle$ is efficien
 \end{mydef}
 Elliptic curve cryptography is based on the premise that ECDLP is hard, actually it appears to be more intractable than DLP in finite fields.
 The ECDLP difficulty enables a Diffie-Hellmann key exchange which precedes the ElGamal signature scheme, these techniques are at the foundations of the public key cryptosystem.
-Fixed a point $P \in E_{\mathbb{F}_p}$, a \textit{public key} is a point $Q \in E_{\mathbb{F}_p}$ while its discrete logatithm $x$ w.r.t. $P$ ($xP=Q$) is the \textit{private key}.
-Given $x$ is easy and fast to compute $Q$, while given $Q$ is unfeasible to find $x$.
+Fixed a point $P \in E_{\mathbb{F}_p}$, a \textit{public key} is a point $Q \in E_{\mathbb{F}_p}$ while its discrete logarithm $x$ w.r.t. $P$ ($xP=Q$) is the \textit{private key}.
+Given $x$ is easy and fast to compute $Q$, while given $Q$ is infeasible to find $x$.
 
 To classify different curves the Standard for Efficient Cryptography (SEC) proposed a set of parameter for elliptic curves over $\mathbb{F}_p$:
 \begin{equation}
@@ -77,7 +77,7 @@ n = 0x FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B
        BFD25E8C D0364141
 h = 1
 \end{verbatim}
-With this curve some calculation becomes more efficient, like computing the modular square root ($\sqrt{x}=x^{\lfloor\frac{p+1}{4}\rfloor}\textmd{ mod }p$) and the modular inverse ($x^{-1}=x^{p-2}\textmd{ mod }p$).
+With this curve some calculation becomes more efficient, like computing the modular square root ($\sqrt{x}=x^{\lfloor\frac{p+1}{4}\rfloor}\textmd{ mod }p$, since $p= 3 \textmd{ mod }4$) and the modular inverse ($x^{-1}=x^{p-2}\textmd{ mod }p$, since $p$ prime).
 
 Looking at the generator above one may think that to store an elliptic curve point is necessary to use 32 bytes for the $x$-coordinate and 32 bytes for the $y$-coordinate. 
 However it is not necessary to use all that space, infact it is possible to take advantage of the elliptic curve equation. Suppose $x \in \mathbb{F}_p$ is the $x$-coordinate of a point, then $y$ is given by $y^2 = x^3 + ax + b \quad \text{mod }p$, which, for $p$ prime, has exactly two solutions in $\mathbb{F}_p$, $y$ and $p-y$, one is odd and the other is even.
@@ -91,9 +91,9 @@ G = 02 79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9
 
 \section{A New Commitment Operation}
 
-Combining conveniently elliptic curve points and hash functions is possible to create new commitment operations.
+Combining conveniently elliptic curve points and hash functions, it is possible to create new commitment operations.
 A similar technique was used for the first time for deriving public keys in deterministic wallets \cite{Max11},
-then the concept of embedding a value in a elliptic curve point was exploited \cite{journals/corr/abs-1212-3257, Sidechain},
+then the concept of embedding a value in an elliptic curve point was exploited \cite{journals/corr/abs-1212-3257, Sidechain},
 later it was reformulated in a more refined way \cite{PoePR, PoeIs}
 suitable for the integration in OpenTimestamps.
 Let's analyse how this new commitment operations are structured.
@@ -115,52 +115,87 @@ Let's analyse how this new commitment operations are structured.
 	Let $m,P$ and $C(m,P)$ be fixed.
 	%Let $C(m,P)$ be a commitment to $m, P$.
 	$\forall P' \in E_{\mathbb{F}_p}$ the problem is to find $m' \in \{0,1\}^*$ s.t. $C(m,P)=C(m',P')$ and $(m', P') \neq (m, P)$. 
-	We want to show that such problem is unfeasible.
+	We want to show that such problem is infeasible.
 	$m'$ satisfies $h(m'||P')G + P'=C(m,P)$.
 	%The substitute value $m'$ needs to satisfy $h(m'||P')G + P'=C(m,P)$.
 	Let $x$ be such that $xG = C(m,P) - P'$, with $0\leq x<n$. 
 	%so $x=h(P'||m')\textmd{ mod }n$. The problem to find a second preimage $m'$ of $x$.
 	Let $h_{P'}$ be defined as follows:
-	\begin{equation}
+	\begin{equation*}
 	\begin{split}
 	h_{P'}:\{0,1\}^* & \rightarrow \{0,1\}^k\\
 	m' & \mapsto h(m'||P')
 	\end{split}
-	\end{equation}
+	\end{equation*}
 	Consider the elements in $\{0,1\}^{k}$ equivalent to $x$ modulo $n$, namely $I_x=\{h \in \{0,1\}^k \approx \mathbb{Z}_{2^k} | h=x\textmd{ mod }n\}$.
 	%Let $I_x=\{h \in \{0,1\}^k \approx \mathbb{Z}_{2^k} | h=x\textmd{ mod }n\}$ be the set of images of $h_{P'}$ suitable to find a second-preimage.
 	Note that:
-	\begin{equation}
+	\begin{equation*}
 		|I_x|=\begin{cases}
 				\lceil\frac{2^k}{n}\rceil & \textmd{if } x\geq n \\
 				\lfloor\frac{2^k}{n}\rfloor & \textmd{if } x< n
 		      \end{cases}
-	\end{equation}
+	\end{equation*}
 	The problem is finding $h_{p'}(m')\in I_x$.
 	Note that $h_{p'}$ is second-preimage resistant, since it is the composition of two functions with that property, $prepend(P')$ and $h$.
-	Finally, if $n \approx 2^k$, the elements in $I_x$ are few (eventually a single one), thus finding $m'$ is unfeasible because $h_{P'}$ is second-preimage resistant.
+	Finally, if $n \approx 2^k$, the elements in $I_x$ are few (eventually a single one), thus finding $m'$ is infeasible because $h_{P'}$ is second-preimage resistant.
 	%$I_x$ contains  $\lceil\frac{2^k}{n}\rceil$ or $\lfloor\frac{2^k}{n}\rfloor$ elements.
 	%Hence to find a second-preimage one needs to find $m'$ s.t. $h_{P'}(m') \in I_x$. Note that $h_{P'}$ is second-preimage resistant, since it is the composition of two function with that property, $prepend(P')$ and $h$. Finally, if $n \approx 2^k$, the elements in $I_x$ are few (eventually a single one), thus finding $m'$ is unfeasible because $h_{P'}$ is second-preimage resistant.
 	\\
 	Now consider the case in which $P$ is not fixed.
-	Suppose we are able to find $x$ s.t. $P=xG$, the map $C$ can be seen as $m,x \mapsto x + h(xG||m)$ which is basically $m,x \mapsto x + \tilde{h}(x,m)$ for an opportune $\tilde{h}$.
-	If such map is a random oracle then we are done, since random oracles are second preimage resistant.
-	We assume $h$ is a random oracle, then also $\tilde{h}$ has the same feature, since it is independent from its input, moreover the offset $x$ does not affect the property. 
-	Hence we conclude that the map is a random oracle which gives second preimage resistance.
+	We model the hash function $h$ as a random oracle $H$ with range $\{0,1\}^k\approx \mathbb{Z}_{2^k}$.
+	$H$ initially has an empty table. 
+	When someone queries the oracle for a value $x \in \{0,1\}^*$,
+	the oracle samples uniformly a random value $H(x)$ in $\mathbb{Z}_{2^k}$ and associate it with $x$.
+	The oracle outputs $H(x)$ and annotate it on his table.
+	If someone calls again the oracle for $x$ he will answer with $H(x)$.
+	The oracle is queried by different entities for possibly different values.
+	Queries for new values result in a new line in the table.
+	Thus before querying $H$ for $x \in \{0,1\}^*$, we expect $H$ to output a uniform random value in $\mathbb{Z}_{2^k}$.
+	\\
+	Now suppose the  discrete logarithm is broken, so anyone can run the map $x \mapsto xG$ both ways.
+	The map:
+	\begin{equation*}
+	\begin{split}
+	\tilde{C} : \{0,1\}^* \times E_{\mathbb{F}_p}  & \rightarrow E_{\mathbb{F}_p} \\
+	m, P & \mapsto H(P||m)G + P
+	\end{split}
+	\end{equation*}
+	where $h$ is substituted by $H$. 
+	If $P=xG$, it becomes:
+	\begin{equation*}
+	\begin{split}
+	\hat{C} : \{0,1\}^* \times \mathbb{Z}_n  & \rightarrow \mathbb{Z}_n \\
+	m, x & \mapsto (H(xG||m)G + x)\textmd{ mod }n
+	\end{split}
+	\end{equation*}
+	We show that $\hat{C}$ can be used as a random oracle.
+	$H$ is uniformly random and independent from its inputs, 
+	moreover the offset $x$ cannot affect that.
+	Applying $\textmd{mod }n$ shrinks the range to $\mathbb{Z}_n$,
+	still $\hat{C}$ can be used as a random oracle.
+	Finally the output of $\hat{C}$, which is equivalent to $C$, is indistinguishable from the output of a random uniform distribution in $\mathbb{Z}_n$.
+	Since $n$ is close to $2^k$ finding a second-preimage to $C(m,P)$ is infeasible. 
+	%Now consider the case in which $P$ is not fixed.
+	%Suppose we are able to find $x$ s.t. $P=xG$, the map $C$ can be seen as $m,x \mapsto x + h(xG||m)$ which is basically $m,x \mapsto x + \tilde{h}(x,m)$ for an opportune $\tilde{h}$.
+	%If such map is a random oracle then we are done, since random oracles are second preimage resistant.
+	%We assume $h$ is a random oracle, then also $\tilde{h}$ has the same feature, since it is independent from its input, moreover the offset $x$ does not affect the property. 
+	%Hence we conclude that the map is a random oracle which gives second preimage resistance.
 \end{proof}
 
 The order $n$ has to be large so that $E_{\mathbb{F}_p}$ is rich enough to make the ECDLP intractable and to avoid shrinking the hash function codomain. Fixed $n$ the choice of $k$ should be made properly: if it is too low $h$ by itself will be too weak, if it is too high, $|I_x|$ will increase, weakening $C$. Hence a good compromise is choosing $n$ the closest possible to $2^k$.
 
-The security of the commitment is given by the security of the hash function, and does not rely on the intractability of the ECDLP. Being able to compute the private key from the commitment is not enough to compute a second input committing to the same point, to do so is necessary to able to find a second-preimage to an hash value.
+The security of the commitment is given by the security of the hash function, and does not rely on the intractability of the ECDLP. Being able to compute the private key from the commitment is not enough to compute a second input committing to the same point, to do so it is necessary to able to find a second-preimage to an hash value.
 
 With this commitment an elliptic curve point used for one purpose can be tweaked with $h(P||m)$ and, while still serving for the previous purpose, it can be a commitment to a value $m$. In fact suppose $x$ is the private key of $P$, $P=xG$, then $C(m,P)=(h(P||m)+x)G$. So the new private key is $(h(P||m)+x) \textmd{mod } n$ and, since $x$ is secret and $h(P||m)$ is a constant value, the resulting key is still secret.
-So each time a elliptic curve point is written, we can encapsulate in it a commitment to an arbitrary value.
+So each time an elliptic curve point is written, we can encapsulate it in a commitment to an arbitrary value.
 This technique may be extended to more general cases, but we will treat only the case of elliptic curves.
 
-Several hash functions and elliptic curves can be used, since we want to construct a working application on Bitcoin we will focus an a particular case with $h=$ SHA256 and $E_{\mathbb{F}_p}=secp256k1$ since Bitcoin itself relies on the assumption that this hash function and this elliptic curve are not broken, moreover the order of the curve $n$ is extremely close\footnote{Assuming that a generic output $x$ of SHA256 is indistinguishable from a sampling from an uniform distribution in $\mathbb{Z}_{2^{256}}$, then $\mathbb{P}(x\geq n)=1-\frac{n}{2^{256}}\approx 10^{-33}$. So the chance to choose $(P||m)$ leading to $|I_x|=2$ is almost zero.} 
+Several hash functions and elliptic curves can be used, considering we want to use Bitcoin as notary, we will focus an a particular case with $h=$ SHA256 and $E_{\mathbb{F}_p}=secp256k1$ since Bitcoin itself relies on the assumption that this hash function and this elliptic curve are not broken.
+Moreover, the order of the curve $n$ is extremely close\footnote{Assuming that a generic output $x$ of SHA256 is indistinguishable from a sampling from an uniform distribution in $\mathbb{Z}_{2^{256}}$, then $\mathbb{P}(x\geq n)=1-\frac{n}{2^{256}}\approx 10^{-33}$. So the chance to choose $(P||m)$ leading to $|I_x|=2$ is almost zero.} 
 to the cardinality of the hash function codomain $2^{256}$. This commitment operation is called \verb|OpSecp256k1Commitment|.
 
-Moreover to use the operation in a OpenTimestamp receipt it has to be an unary operation, hence it will take as input $P||m$ and will return the $x$-coordinate as output, both in bytes. More precisely it will operate as described in Algorithm \ref{alg:opsecp256k1}.
+Furthermore, to use this operation in as OpenTimestamp receipt, it has to be an unary operation, hence it will take as input $P||m$ and will return the $x$-coordinate of $C(m P)$ as output, both in bytes. More precisely it will operate as described in Algorithm \ref{alg:opsecp256k1}.
 \begin{algorithm}
 	\caption{Commitment to a $secp256k1$ point using SHA256}
 	\label{alg:opsecp256k1}
@@ -178,13 +213,19 @@ It can be used for several purposes, however, for this work, we focus only on ti
 \section{Timestamping Applications}
 On the Bitcoin chain, elliptic curve points are used as public keys locking bitcoins or as part of the signature. The first case lead to the \textit{pay-to-contract} technique, the second to \textit{sign-to-contract}. We will analyse both uses and we will explain which one should be preferred.
 
-This names owe their origin to the first application for which they were though, that was associating a \textit{contract} to an elliptic curve point. 
+These names owe their origin to the first application for which they were though: associate a \textit{contract} to an elliptic curve point. 
 The term contract may seem misleading, but it turns out to be useful dealing with \textit{sign-to-contract}, since it let us distinguish between the message signed and the contract committed.
 
 \subsection{\textit{pay-to-contract}}
 Public keys are elliptic curve points, here we show how they could commit to a value while still maintaining the secrecy of the private key.
 
-Alice needs to send Bob some bitcoins. Bob has public key $P=xG$. Bob wants to timestamp the message $m$. Bob computes $Q=h(P||m)G+P$. Bob tells Alice that his private key is $Q$. Alice broadcasts a transaction sending bitcoins to $Q$, for instance she uses a P2PK publishing on the chain:
+We illustrate it through an example. 
+Alice needs to send Bob some bitcoins. 
+Bob has public key $P=xG$. 
+Bob wants to timestamp the message $m$. 
+Bob computes $Q=h(P||m)G+P$. 
+Bob tells Alice that his public key is $Q$.
+Alice broadcasts a transaction sending bitcoins to $Q$, for instance she uses a P2PK publishing on the chain:
 \begin{verbatim}
 script pubkey:
 <Q> OP_CHECKSIG
@@ -292,9 +333,13 @@ ac10270000000000001976a914+underline[57529515dc2e14701374eb65f0191b61ecfd]
 \end{Verbatim}
 Where the commitment to the data is underlined.
 
-This technique is completely viable but on the other hand it has a relevant issue.
-Almost all bitcoin wallet (software to manage private keys) use a deterministic derivation for creating new keys \cite{BIP32}. An initial value is generated at random using a cryptographically secure procedure, this value is called \textit{seed} and sometimes is a list of words from a given dictionary. The keys are obtained from the seed using the specifications given by BIP32 and they are something like $h(seed||number)$. This procedure make possible to completely recover a wallet from the seed only, so if a user wants to use his wallet from another device he just need to remember the seed and all his private keys will be reconstructed.
+This technique is completely viable, but it has a relevant issue.
+Almost all bitcoin wallets (software to manage private keys) use a deterministic derivation for creating new keys \cite{BIP32}. An initial value is generated at random using a cryptographically secure procedure, this value is called \textit{seed} and sometimes encoded as a list of words from a given dictionary. The keys are obtained from the seed using the specifications given by BIP32 and they are something like $h(seed||number)$. This procedure make possible to completely recover a wallet from the seed only, so if a user wants to use his wallet from another device he just need to remember the seed and all his private keys will be reconstructed.
 Using pay-to-contract actually Bob goes outside of the BIP32 derivation. So if he looses $m$ or $P$ he won't be able to spend the bitcoin locked by $Q$. For this reason the use of \textit{pay-to-contract} for mere timestamping purposes should be limited.
+
+In the case of a P2PKH, a timestamp made with \textit{pay-to-contract} reveals the public key which is the preimage of the receiving address. 
+The public key will be revealed anyway when the corresponding output will be spent, but, if it is still unspent, such disclosure may be an undesired feature. 
+In addition, when spending that UTXO, the public key is actually written in the chain, giving another anchoring point to create a different timestamp; this timestamp is just another path from the data to the chain, but it is not really useful since it cannot precede the other timestamp.
 
 \subsection{\textit{sign-to-contract}}
 The other place where elliptic curve points are published in the chain is the signature. Bitcoin uses the elliptic curve digital signature algorithm, ECDSA\footnote{\textit{sign-to-contract} works also with other signature schemes involving elliptic curves, like Schnorr signature.}, that works as detailed in Algorithm \ref{alg:ecdsa-sign}.
@@ -303,8 +348,8 @@ The other place where elliptic curve points are published in the chain is the si
 	\label{alg:ecdsa-sign}
 	\begin{algorithmic}[1]
 		\Procedure{ECDSAsig}{$x, m$}\Comment{$x$ private key signing}
-		\Statex \Comment{$m$ 32 bytes message to be singed}
-		\State $k \in_R \mathbb{F}_n \backslash \{0\}$ \Comment{select $k$ at random in $\{1,..., n-1\}$}
+		\Statex \Comment{$m$ 32 bytes message to be signed}
+		\State $k \in_R \mathbb{Z}_n \backslash \{0\}$ \Comment{select $k$ at random in $\{1,..., n-1\}$}
 		\State $R \gets k G$
 		\State $r \gets R_x \textmd{ mod }n$\Comment{if $r=0$, fail}
 		\State $s \gets k^{-1}(m + rx) \textmd{ mod }n$\Comment{if $s=0$, fail}
@@ -313,18 +358,17 @@ The other place where elliptic curve points are published in the chain is the si
 	\end{algorithmic}
 \end{algorithm}
 The value $k$ is called nonce or \textit{ephemeral private key}, $R$ is called \textit{ephemeral public key}.
-Its a common practice to avoid to generate $k$ at random,  instead is performed a deterministic derivation of the type $k \gets h(x||m)$, the precise specification of $h$ is given by the RFC6979 standard \cite{rfc6979}.
 
-A signature is a couple of integer in $\{1,...,n-1\}$, the first one is the $x$-coordinate (mod $n$) of the ephemeral public key.
+A signature is a couple of integers in $\{1,...,n-1\}$, the first one is the $x$-coordinate (mod $n$) of the ephemeral public key.
 The idea of \textit{sign-to-contract}, exploited in Algorithm \ref{alg:ecdsa-s2c}, is to tweak $R$, so that the first part of the signature will be a commitment to (also) another message, the contract $c$.
 \begin{algorithm}
 	\caption{ECDSA \textit{sign-to-contract} (s2c)}
 	\label{alg:ecdsa-s2c}
 	\begin{algorithmic}[1]
-		\Procedure{ECDSAs2c}{$x, m, c$}\Comment{$x$ private key}
-		\Statex \Comment{$m$ 32 bytes message to be singed}
+		\Procedure{ECDSAs2c}{$x, m, c$}\Comment{$x$ private key signing}
+		\Statex \Comment{$m$ 32 bytes message to be signed}
 		\Statex \Comment{$c$ contract to commit}
-		\State $k \gets$ \Call{DeterministicNonce}{$x,m$} \Comment{using RFC6979}
+		\State $k \in_R \mathbb{Z}_n \backslash \{0\}$ \Comment{select $k$ at random in $\{1,..., n-1\}$}
 		\State $R \gets k G$
 		\State $tweak \gets h(R||c)$\Comment{interpreted as an int}
 		\State $e \gets (k + tweak) \textmd{ mod }n$ \Comment{if $e=0$, fail}
@@ -428,6 +472,17 @@ Where the commitment value is underlined.
 
 Using \textit{sign-to-contract} every signature can include a commitment to a certain value. Contrary to \textit{pay-to-contract}, the loss of $c$ or $R$ leads to the impossibility of proving the commitment but not to a loss of funds. Indeed the signature published on the chain has already provided to its original purpose moving the coins to another owner. This makes \textit{sign-to-contract} a preferable commitment scheme.
 
-The technique behind \textit{sign-to-contract} can be seen as a use of the subliminal channel in the ECDSA signature, exploited in \cite{DBLP:journals/jsac/Simmons98}. 
-For a fixed message $m$ and fixed private key $x$, selecting $k$ at random gives the signer some arbitrariness on how the signature will look like. 
-Consider the case where Alice want to secretly communicate a simple message $c$ to Bob. Alice produces a signature which is a commitment via \textit{sign-to-contract} to a simple message $c$. Alice declares $P$ publicly. Bob knows that $c$ comes from a brute forceable set $S$. Bob sees the signature and tries all $c \in S$ until he finds the one which generated the commitment. So Alice sent to Bob a message without anyone noticing the communication using the subliminal channel that ECDSA leaves open.
+In Algorithm \ref{alg:ecdsa-sign} and \ref{alg:ecdsa-s2c} the nonce $k$ is generated at random, however often computers are poor sources of randomness which may lead to security issues, namely exposing the nonce $k$ actually reveals the private key $x$. 
+To reduce this problem, it is a common practice to avoid the random generation, instead, it is performed a deterministic derivation of the type $k \gets h(x||m)$, the precise specification of $h$ is given by the RFC6979 standard \cite{rfc6979}. With this technique,  in a signature, the private key is unique source of entropy used for security, indeed the message $m$ is public and the nonce $k$ is as secret as $x$, since, without $x$, it is not possible to guess $h(x||m)$.
+Deterministic nonce and \textit{sign-to-contract} are completely independent techniques that can improve a signature scheme, it is possible to implement one without the other.
+
+In addition, exposing two signature for the same message $m$, generated with the same private key $x$, but made using two different nonces $k_1, k_2$ reveals the private key.
+This is a relevant issue when managing bitcoin, however signing with a deterministic nonce solves this problem.
+With \textit{sign-to-contract}, considering a message $m$, private $x$, a deterministic nonce, but two contracts $c_1, c_2$, such issue, despite the deterministic derivation, arises again. 
+Thus is important take care of this chance during the implementation.
+
+Using a deterministic nonce also, in some sense\footnote{To verify that the nonce is deterministic, it is necessary the knowledge of the private key, thus the verification cannot be performed by whoever. Moreover, in some cases, like bitcoin hardware wallets, extracting the secret key may be hard or unsafe.}, closes the subliminal channel in ECDSA signature. 
+The signer has some arbitrariness in choosing the nonce and could use it to transmit a certain message, as exploited in \cite{DBLP:journals/jsac/Simmons98}. 
+With \textit{sign-to-contract} the nonce is still deterministic, but is a function of $x,m$ and, in addition, $c$. 
+The technique could be seen as a particular use of the subliminal channel of ECDSA.
+Consider the case where Alice wants to secretly communicate a simple message $c$ to Bob. Alice produces a signature which is a commitment via \textit{sign-to-contract} to a simple message $c$. Alice declares $P$ publicly. Bob knows that $c$ comes from a brute forceable set $S$. Bob sees the signature and tries all $c \in S$ until he finds the one which generated the commitment. As a result, Alice sent to Bob a message without anyone noticing the communication using the subliminal channel that ECDSA leaves open.

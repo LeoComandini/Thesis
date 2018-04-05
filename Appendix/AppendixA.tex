@@ -2,13 +2,13 @@
 \label{app:A}
 % handbook of applied cryptography
 
-In this section we recall the formal definitions from \cite{Menezes97handbookof} to properly understand what a finite field is.
+In this Appendix we recall basic formal definitions from \cite{Menezes97handbookof} to properly understand what a finite field is.
 
 \section{Groups}
 \begin{mydef} A binary operation $*$ on a set $S$ is a mapping  $S \times S$ to $S$. That is, $*$ is a rule which assigns to each ordered pair of elements from $S$ an element of $S$. \end{mydef}
 
 \begin{mydef} 
-	A group $(G, *)$ consists of a set $G$ with a binary operation $*$ on G satisfying
+	A group $(G, *)$ consists of a set $G$ with a binary operation $*$ on $G$ satisfying
 	the following three axioms.
 	\begin{itemize}
 		\item[(i)] The group operation is associative. That is, $a* (b * c) = (a* b) * c \quad \forall a, b, c \in G$.
@@ -27,16 +27,17 @@ In this section we recall the formal definitions from \cite{Menezes97handbookof}
 
 \begin{myexample} 
 	The set of integers $\mathbb{Z}$ with the operation of addition forms a group. 
-	The identity element is 0 and the inverse of an integer $a$ is the integer $−a$. \end{myexample}
+	The identity element is 0 and the inverse of an integer $a$ is the integer $-a$. 
+\end{myexample}
 
 \begin{myexample} 
-	The set $\mathbb{Z}_n$, with the operation of addition modulo $n$, forms a group of order $n$. 
+	The set $\mathbb{Z}_n=\{a \in \mathbb{Z} | 0 \leq a \leq n - 1\}$, with the operation of addition modulo $n$, forms a group of order $n$. 
 	The set $\mathbb{Z}_n$ with the operation of multiplication modulo $n$ is not a group, since not all elements have multiplicative inverses. 
 \end{myexample}
 
 \begin{mydef} 
 	The multiplicative group of $\mathbb{Z}_n$ is $\mathbb{Z}_n^* = \{a \in \mathbb{Z}_n | gcd(a, n) = 1\}$. 
-	In particular, if n is a prime, then $\mathbb{Z}_n^* = \{a | 1 \leq a \leq n − 1\}$.
+	In particular, if n is a prime, then $\mathbb{Z}_n^* = \{a | 1 \leq a \leq n - 1\}$.
 \end{mydef}
 
 \begin{myexample} 
@@ -48,7 +49,7 @@ In this section we recall the formal definitions from \cite{Menezes97handbookof}
 \end{mydef}
 
 \begin{mydef} 
-	A group $G$ is cyclic if there is an element $α \in G $such that for each $b \in G$ there is an integer $i$ with $b= \alpha^i$. Such an element $\alpha$ is called a generator of $G$. 
+	A group $G$ is cyclic if there is an element $\alpha \in G $such that for each $b \in G$ there is an integer $i$ with $b= \alpha^i$. Such an element $\alpha$ is called a generator of $G$. 
 \end{mydef}
 
 \section{Rings}
@@ -85,13 +86,13 @@ In this section we recall the formal definitions from \cite{Menezes97handbookof}
 	A field is a commutative ring in which all non-zero elements have multiplicative inverses.  
 \end{mydef}
 
-\begin{myexample} 
-	the rational numbers $\mathbb{Q}$, the real numbers $\mathbb{R}$, and the complex numbers $\mathbb{C}$ form fields of characteristic $0$ under the usual operations. 
-\end{myexample}
-
 \begin{mydef} 
 	The characteristic of a field is 0 if $\overbrace{1+1+\dots+1}^{m times}$ is never equal to $0$ for any $m \geq 1$. Otherwise, the characteristic of the field is the least positive integer $m$ such that $\sum_{i=1}^{m}1 = 0$.
 \end{mydef}
+
+\begin{myexample} 
+the rational numbers $\mathbb{Q}$, the real numbers $\mathbb{R}$ and the complex numbers $\mathbb{C}$ form fields of characteristic $0$ under the usual operations. 
+\end{myexample}
 
 \begin{myexample} 
 	$\mathbb{Z}_n$ is a field (under the usual operations of addition and multiplication modulo $n$) if and only if $n$ is a prime number. If $n$ is prime, then $\mathbb{Z}_n$ has characteristic $n$. 

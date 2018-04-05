@@ -8,6 +8,7 @@ Trusted schemes can be built upon trustless ones, but the other way around is no
 Trustless systems have higher security but the mechanism sustaining it makes thing much more sophisticated, yielding to less accuracy and efficiency with respect to trusted ones.
 
 \section{Bitcoin}
+\label{bitcoin}
 Bitcoin is an electronic payment system based on cryptography rather than trust. A \textit{coin} is defined as a chain of digital signatures. Each owner transfers the electronic coin to the next by digitally signing a hash of the previous \textit{transaction} and the public key of next owner (or a commitment to it).
 
 Coins doesn't have to be managed individually, they can be combined and split in transactions containing multiple inputs and outputs. The last output appended to a coin is said unspent transaction output, UTXO.
@@ -38,7 +39,7 @@ To implement a \textit{distributed} version of a timestamp server it is used a \
 \end{itemize}
 \end{mydef}
 
-The proof-of-work is basically finding partial hash collisions for the leading zero bits. Hash functions such SHA256 are designed in a way that the fastest algorithm for computing partial collisions is brute force. Thus finding a solution to the challenge is computationally expensive, in other words finding a solution proves that CPU time was consumed and energy was expended for that purpose.
+The proof-of-work is basically finding partial hash collisions for the leading zero bits. Hash functions such SHA256 are designed in a way that the fastest algorithm for computing partial collisions is brute force\footnote{Some optimizations have been discovered \cite{DBLP:journals/corr/Hanke16}, but they still require a massive brute force component.}. Thus finding a solution to the challenge is computationally expensive, in other words finding a solution proves that CPU time was consumed and energy was expended for that purpose.
  
 If the hash function has a sufficiently large codomain, it can be, in practice, arbitrarily hard to find a solution. For instance consider SHA256, the codomain is $\{0,1\}^{256} \approx \mathbb{Z}_{2^{256}}$, assuming that its outputs have the same probabilities, the chance that a given $nonce$ has hash value less then the target is $\frac{w}{2^{256}}$.  
 If $w=1$ the proof-of-work is finding a pre-image of 0 (with additional constraints) but that is not feasible thanks to its preimage resistance property. 
@@ -72,10 +73,10 @@ Bitcoin can be seen as a network, nodes are entities who run a software followin
 	\end{algorithmic}
 \end{algorithm}  
 
-Honest nodes always consider the chain with the most proof-of-work to be the correct one and will keep working on extending it.
+Nodes always consider the chain with the most proof-of-work to be the correct one and will keep working on extending it.
 If two nodes find different versions of the next block simultaneously, the network will be split into two sets with different chains. 
 The tie will be broken when the next solution is found: one chain will have more proof-of-work then the other, the nodes working on the other branch will switch to the longer one; this event is called \textit{reorg}. 
-Reorgs greater than one block may happen, but with exponentially decreasing probabilities, given that the majority of the nodes does not collaborate to behave maliciously; for practical purposes a transaction is considered \textit{confirmed} after 6 blocks are appended to the block including the transaction.
+Reorgs greater than one block may happen, but with exponentially decreasing probabilities, if the majority of the nodes does not collaborate to behave maliciously; for practical purposes a transaction is considered \textit{confirmed} after 5 blocks are appended to the block including the transaction or, in other words, when the transaction is 6 blocks deep.
 
 By convention the first transaction in a block is a special transaction that starts a new coin owned by the creator of the block, called \textit{coinbase}.
 It provides an \textit{incentive} to the nodes performing the proof-of-work and a way to initially distribute coins into circulation, since there is no central authority to issue them.
@@ -193,7 +194,7 @@ Even though is a viable and working solution this technique should be avoided, t
 
 % script op code
 \section{OP\_RETURN}
-To solve the UTXO bloat problem, with the Bitcoin Core 0.9.0 release, a new script opcode, OP\_RETURN, was introduced. An OP\_RETURN change creates a \textit{provably-prunable} output, with script pubkey:
+To mitigate the UTXO bloat problem, with the Bitcoin Core 0.9.0 release, a new script opcode, OP\_RETURN, was introduced. An OP\_RETURN change creates a \textit{provably-prunable} output, with script pubkey:
 \begin{verbatim}
 OP_RETURN <Data>
 \end{verbatim}
@@ -201,8 +202,8 @@ Such output is provably unspendable, thus it will probably have zero bitcoin loc
 
 OP\_RETURN is used for different purposes, writing raw data on the chain, adding information related to assets linked to a coin or timestamping. Sometimes the data field starts with a prefix indicating if a second layer protocol is being used \cite{DBLP:conf/fc/BartolettiP17}. 
 
-To create a timestamp for some data $d$ with arbitrary size one should add to his transaction an OP\_RETURN change followed by the hash value of $d$ with zero bitcoin associated. If the hash function used has a 32 bytes output, this increases the size of his transaction by 43 bytes (amount 8 bytes, length script pubkey 1 byte, OP\_RETURN 1 byte, length data field 1 byte, data 32 bytes) leading to a lower fee (measured in sat/byte\footnote{After segwit the correct metric to use is sat/vbyte instead of sat/byte}) which may slow down confirmation time or may lead the user to increase the overall fee, thus including an OP\_RETURN \textit{has a cost}.
+To create a timestamp for some data $d$ with arbitrary size one should add to his transaction an OP\_RETURN change followed by the hash value of $d$ with zero bitcoin associated. If the hash function used has a 32 bytes output, this increases the size of his transaction by 43 bytes (amount 8 bytes, length script pubkey 1 byte, OP\_RETURN 1 byte, length data field 1 byte, data 32 bytes) leading to a lower fee (measured in sat/byte\footnote{After segwit the correct metric to use is sat/vbyte instead of sat/byte}.) which may slow down confirmation time or may lead the user to increase the overall fee, thus including an OP\_RETURN \textit{has a cost}.
 
-In addition it is important to point out that when one wants to timestamp he has also to perform a bitcoin transaction. It may be a transaction that he would have done anyway, but in case these two needs does not coincide he has to send some bitcoins to himself adding the OP\_RETURN change to actually write something on the chain.
+In addition it is important to point out that when one wants to timestamp he has also to perform a bitcoin transaction. It may be a transaction that he would have done anyway, but in case these two needs do not coincide, he has to send some bitcoins to himself adding the OP\_RETURN change to actually write something on the chain.
 Moreover transactions including OP\_RETURN are easy to spot, hence malicious miners may decide to censor those. A solution is using address commitment, which can be censored only by censoring all the UTXO spendable by all the users who want to timestamp data, which is extremely hard.
-Having said that, if there is no fear of censorship, presumably in most cases, OP\_RETURN is the correct tool for timestamping.
+Keeping this in mind, if there is no fear of censorship, which presumably happens in most cases, then OP\_RETURN is the correct tool for timestamping.

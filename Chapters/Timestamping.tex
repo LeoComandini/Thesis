@@ -37,17 +37,18 @@ The property required is sometimes referred as second pre-image resistance. For 
 The simplest examples are the append and prepend operations:
 
 \begin{myexample}
-	\textquotedblleft hello\textquotedblright $\xrightarrow{\text{append(\textquotedblleft world\textquotedblright)}}$ \textquotedblleft helloworld\textquotedblright.
+	\textquotedblleft hello\textquotedblright, \textquotedblleft world\textquotedblright $\xrightarrow{\text{append()}}$ \textquotedblleft helloworld\textquotedblright.
 \end{myexample}
-It is impossible to change the input without changing the output: the output contains the input itself. In this example the function is a unary operation, since it takes only one input, however commitment operation may have more than one input:
+It is impossible to change the inputs without changing the output: the output contains the inputs themselves.
+In the example the function is a binary operation, however, by fixing one input, it is possible to turn these commitment operations into unary operations:
 \begin{myexample}
-	\textquotedblleft world\textquotedblright, \textquotedblleft hello\textquotedblright $\xrightarrow{\text{prepend()}}$ \textquotedblleft helloworld\textquotedblright.
+	\textquotedblleft world\textquotedblright $\xrightarrow{\text{prepend(\textquotedblleft hello\textquotedblright)}}$ \textquotedblleft helloworld\textquotedblright.
 \end{myexample}
 Append and prepend have two problems: they reveal everything about the inputs and the size of the output is always greater than the size of the inputs. 
 
 Hiding the input of a commitment is often useful. For instance Robert Hooke \cite{Petroski96invention} in 1676 had formulated the spring law that will take his name. He wanted to prove that he knew that without revealing the law itself, so he published the latin anagram \textquotedblleft ceiiinosssttuv\textquotedblright. Later in 1678 he revealed the solution, \textquotedblleft ut tensio, sic vis\textquotedblright (\textquotedblleft as the extension, so the force\textquotedblright). However the anagram is not an optimal commitment operation: \textquotedblleft ut vis, sic tensio\textquotedblright is a solution too. For that time it was an acceptable solution, the verification procedure had minimal requirements and there was no real incentive in lying. Nowadays better solutions are available, hence using an anagram will make the verifier suspicious.
 
-To address this problems cryptographic hash functions are used. Hash functions maps bit strings of arbitrary finite length into bit strings of fixed length \cite{Damgard:1989:DPH:118209.118248}. 
+To address these problems cryptographic hash functions are used. Hash functions maps bit strings of arbitrary finite length into bit strings of fixed length \cite{Damgard:1989:DPH:118209.118248}. 
 \begin{mydef}
 	$h : \{ 0, 1 \} ^* \rightarrow \{ 0, 1 \} ^n $ is a hash function if it is computable in polynomial time in the length of the input.
 \end{mydef}
@@ -70,7 +71,7 @@ Collision resistance, although is a nice to have, is not necessary for timestamp
 Such properties depend on the dimension of the codomain, which is given by the parameter $n$, precisely $2^n$. If it is too low it will be easy to produce examples that invalidates the properties, if it is too high the hash function is not a good tool for reducing the size of the input. A good compromise has to be found, it should be based on the current state of the art of cryptanalysis and computer science. However what is considered acceptable during a period may not be accepted in a subsequent one, in fact if new techniques that break an hash function are discovered, then its use will be considered insecure.
 Several hashing functions has been proposed, we show a couple of examples:
 \begin{myexample}
-	SHA1 (Secure Hashing Algorithm) was designed by the National Security Agency (NSA), and released in 1995. It maps bit strings to a 160 bit space, it was considered preimage, second-preimage and collision resistant. In 2005 cryptanalysts discover a procedure to find collisions, hence it was declared insecure. However only collision resistance was broken, thus, for it can still be used for timestamping purposes.
+	SHA1 (Secure Hashing Algorithm) was designed by the National Security Agency (NSA), and released in 1995. It maps bit strings to a 160 bit space, it was considered preimage, second-preimage and collision resistant. In 2005 cryptanalysts discover a theoretical procedure to find collisions, later practical attacks were published \cite{cryptoeprint:2017:190}, hence it was declared insecure. However only collision resistance was broken, thus it can still be used for timestamping purposes.
 	\begin{verbatim}
 	SHA1(b'Hello World!\n') = a0b65939670bc2c010f4d5d6a0b3e4e4590fb
 	                          92b
@@ -80,9 +81,9 @@ Several hashing functions has been proposed, we show a couple of examples:
 \end{myexample}
 
 \begin{myexample}
-	SHA256 belongs to the family SHA2, the generation of hash functions following SHA1. It outputs  strings 256 bit long and, at the moment, it is considered to satisfy all the properties in Definition \ref{hash-prop}.
+	SHA256 belongs to the family SHA2, the generation of hash functions following SHA1\footnote{Currently, it is available SHA3, which contains, among others, KECCAK256.}. It outputs  strings 256 bit long and, at the moment, it is considered to satisfy all the properties in Definition \ref{hash-prop}.
 	Several systems are built upon this assumption. 
-	In addition, as other hash functions, SHA256 could be modeled as a random oracle, a fixed input will provide always the same output, since hash functions are deterministic, but the outputs corresponding to new inputs will give a results, that for someone with a reasonable amount of computing power, are indistinguishable from a uniform distribution. 
+	In addition, as other hash functions, SHA256 could be modeled as a random oracle, a fixed input will provide always the same output, since hash functions are deterministic, but the outputs corresponding to new inputs will give results that are indistinguishable from a uniform distribution. 
 	Note how a little change in the input produces outputs very dissimilar in both hash functions, this feature helps to spot alterations in the inputs.
 	\begin{verbatim}
 	SHA256(b'Hello World!\n') = 03ba204e50d126e4674c005e04d82e84c21
@@ -97,7 +98,7 @@ More complex commitment operations are possible.
 But they should be used only if there are some valid and shared motivations. Finding a badly motivated commitment operation in a proof will make verifiers suspicious.
 
 Combining the examples we saw it is possible to implement a data structure that is useful to embed several commitments into a single hash value, 
-this structure is called \textit{Merkle tree} [Mer]. Let $h$ be a second-preimage resistant hash function, start from $k$ data to timestamp $\{d_i\}_{i=1}^k$, called \textit{leaves}, compute their hash values $\{h(d_i)\}_{i=1}^k=\{h_i\}_{i=1}^n$. The first step combines the couples of adjacent values (if there is one) by concatenating ($||$) the two values and computing the hash value of the concatenation: $h(h_i||h_{i+1})$ $\forall i \in [1,k]$ odd. The following steps proceed in an analogous manner, but starting from the results computed at the step before as described in Algorithm \ref{alg:merkle-tree}. 
+this structure is called \textit{Merkle tree} \cite{DBLP:conf/sp/Merkle80}. Let $h$ be a second-preimage resistant hash function, start from $k$ data to timestamp $\{d_i\}_{i=1}^k$, called \textit{leaves}, compute their hash values $\{h(d_i)\}_{i=1}^k=\{h_i\}_{i=1}^n$. The first step combines the couples of adjacent values (if there is one) by concatenating ($||$) the two values and computing the hash value of the concatenation: $h(h_i||h_{i+1})$ $\forall i \in [1,k]$ odd. The following steps proceed in an analogous manner, but starting from the results computed at the step before as described in Algorithm \ref{alg:merkle-tree}. 
 
 \begin{algorithm}
 	\caption{Merkle tree construction}
@@ -140,16 +141,16 @@ Merkle trees can aggregate several commitments into one hash value, giving a sca
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=\linewidth]{Images/merkle-tree.png}
-		\caption[Merkle tree example]{Merkle tree example. the Merkle root is a commitment to the leaves $\{data_i\}_{i=1}^5$.}
+		\caption[Merkle tree example]{Merkle tree example. The Merkle root is a commitment to the leaves $\{data_i\}_{i=1}^5$.}
 		\label{fig:merkle-tree}
 	\end{center}
 \end{figure}
 
 \section{Time Attestations}
-
 Attestations are provided by a notary, which has the authority to state the time.
 Notaries are sometimes referred as timestamp servers, who ask for creating or verifying that a timestamp is referred as client.
 A time attestation binds some data $d$ to the time $t$, $d$ could be directly the data to timestamp or a commitment to them. 
+To properly design a timestamp scheme it is crucial to analyse which features an attestation should have and how to choose a notary that provides the desired security.
 
 An attestation should be \textit{tamper resistant} or, even better, \textit{immutable}. Once created no one should be able to modify that, backdating the timestamp or changing the underlying data without making the attestation invalid.
 
@@ -162,11 +163,11 @@ A good notary does not make distinctions among clients or data to timestamp, in 
 In the case of a sent letter, the notary is the post officer, he will place the postmark on the letter giving it a date. 
 Clients must trust such notary, which in theory can place a wrong date $t'$ instead of $t$, creating a false timestamp (if $t'<t$) or a deliberate weaker proof (if $t'>t$). Alternately he can decide not to timestamp a letter or modifying its content before timestamping. In addition the resulting timestamp is unique, thus if it gets damaged or lost the proof is gone forever.
 
-A notary willing to show himself as more trustworthy can make its possibly dishonest behaviour harder to implement. A possible solution is to link all the timestamps so that changing one would implies changing all the subsequent ones. A timestamp proof $TS_i$ for the data $d_i$ at the time $t_i$ ($t_{i-1}<t_i<t_{i+1}$) would be something like:
+A notary willing to show himself as more trustworthy can make its possibly dishonest behaviour harder to implement. A possible solution is to link all the timestamps so that changing one would implies changing all the subsequent ones. A timestamp proof $TS_i$ for the data $d_i$ at the time $t_i$ ($t_{i-1}<t_i<t_{i+1}$) would the following structure:
 \begin{equation}
 	\label{singed-chain}
 	\begin{cases}
-		TS_0 =(d_0,t_0), \sigma_N((d_0,t_0)) & 
+		TS_0 =(d_0,t_0, \sigma_N((d_0,t_0))) & 
 		\\
 		TS_i =(d_i,t_i,TS_{i-1}, \sigma_N((d_i,t_i,TS_{i-1}))) & i = 1, ..., i_{max}		
 	\end{cases}
