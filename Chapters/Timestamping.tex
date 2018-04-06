@@ -163,7 +163,7 @@ A good notary does not make distinctions among clients or data to timestamp, in 
 In the case of a sent letter, the notary is the post officer, he will place the postmark on the letter giving it a date. 
 Clients must trust such notary, which in theory can place a wrong date $t'$ instead of $t$, creating a false timestamp (if $t'<t$) or a deliberate weaker proof (if $t'>t$). Alternately he can decide not to timestamp a letter or modifying its content before timestamping. In addition the resulting timestamp is unique, thus if it gets damaged or lost the proof is gone forever.
 
-A notary willing to show himself as more trustworthy can make its possibly dishonest behaviour harder to implement. A possible solution is to link all the timestamps so that changing one would implies changing all the subsequent ones. A timestamp proof $TS_i$ for the data $d_i$ at the time $t_i$ ($t_{i-1}<t_i<t_{i+1}$) would the following structure:
+A notary willing to show himself as more trustworthy can make its possibly dishonest behaviour harder to implement. A possible solution is to link all the timestamps so that changing one would implies changing all the subsequent ones. A timestamp proof $TS_i$ for the data $d_i$ at the time $t_i$ ($t_{i-1}<t_i<t_{i+1}$) would have the following structure:
 \begin{equation}
 	\label{singed-chain}
 	\begin{cases}
