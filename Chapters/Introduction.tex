@@ -1,26 +1,23 @@
 \chapter{Introduction}
 \label{chpr:intro}
 Associate dates with events is the essential medium to write history. 
-In the distant past it was appanage of a restricted elite of powerful individuals, with the evolution and progress of society, the amount people able to write their own history has increased.
-This lead to the emergence of different versions but, after all, it is not a crucial concern, as several human constructions, history can be a distortion of reality.
-Converge to a single version is a tough matter, yet it is grounded to the ability of everyone to write their own history.
-Preclude to some individuals the possibility to state and record their viewpoint may compromise incontrovertibly the bearing between history and reality.
-In this work we focus on the primary obstacle: record arbitrary events.
+In the distant past it was appanage of a restricted elite of powerful individuals, with the evolution and progress of society, the amount of people able to write their own history has increased.
+This lead to the emergence of different versions: not a crucial concern because, as for several human constructions, history can be a distortion of reality.
+Converge to a single version is a tough matter, yet it is grounded into the ability of everyone to write their own history.
+Precluding some individuals from the ability to state and record their viewpoint does compromise the natural interaction between history and reality.
+In this work we focus on the primary obstacle: the ability of recording arbitrary events.
 
-Using proper semantics an event is mapped into data, which are embedded in an item suitable for storing and sharing, finally on the resulting object is attached a date. 
-Each step can be performed in a variety of manners and each particular problem has its own optimal choices to fulfil at best the given requirements. 
+Using proper semantics, an event is mapped into data, which are then embedded in an item suitable for storing and sharing, finally on the resulting object a date is attached. 
+Each step can be performed in a variety of manners and has its own optimal choices to fulfil the given requirements. 
 In this work we assume the meaning of the data is given and we refer to the procedure of binding a date to data as timestamping. 
-We focus on weaknesses and strengths of every choice, starting from physical to digital timestamping, posing particular emphasis on the trust issue.
-If a third party is placing the date on the item containing the data, it may behave maliciously, among the things, compromising the data or setting a wrong date. This issue can be addressed by properly utilizing technologies achieving distributed consensus, like Bitcoin.
-Such accomplishment let anyone write its own version of the events, oppressed people are given the possibility to record what they witness even in hostile environments, reducing powers and responsibilities of central authorities.
+We focus on weaknesses and strengths of every choice, starting from physical to digital timestamping, with particular emphasis on the trust issue.
+If a third party is placing the date on the item containing the data, it may behave maliciously, e.g. compromising the data or setting a wrong date. This issue can be addressed using distributed consensus technologies, like Bitcoin, allowing anyone to write his own version of the events: oppressed people have the possibility to record what they witness even in hostile environments, reducing powers and responsibilities of central authorities.
 
-The actual implementation to make this viable and accessible on large scale presented tough technical steps. 
-It resulted in the formation of an open protocol defining a standard and best practices \cite{OTSWeb} that are currently emerging as a new praxis to integrate in other systems to enhance security. 
-The protocol is among the first and the few non-financial blockchain-related working applications \cite{ESMAresponse}.
+How to make this approach viable and accessible on large scale presents tough technical steps, resulting in best practices \cite{OTSWeb} that have been used to define an open protocol standard. This protocol has emerged as the first (along with very few others) non-financial blockchain-related working application \cite{ESMAresponse}.
 
-Our contribution starts with a deep investigation of an improvement proposal \cite{PoePR, PoeIs} to the standard that yields to the chance to include a timestamp inside a bitcoin transaction without increasing its size and hence its cost. 
-We aim to provide guidelines to properly understand what's behind this technique and the implications it carries.
-Finally we present a practical implementation we developed of this new feature: an integration to a popular bitcoin open source wallet that allows users to create timestamps within transactions with no additional charge. 
+Our contribution starts with a deep investigation of an improvement proposal \cite{PoePR, PoeIs} to the standard that allows the inclusion of a timestamp inside a regular bitcoin transaction without increasing its size and hence its cost. 
+We aim to provide guidelines to properly understand what is behind this technique and the implications it carries.
+Finally we present a practical implementation of this new feature we have developed as integration inside a popular bitcoin open source wallet: users can create timestamps within transactions with no additional charge. 
 
 \section{Structure}
 In this work we aim to describe exhaustively foundations, benefits and issues of arising from the new proposed technique. 
@@ -29,7 +26,7 @@ In this section we outline the path we are going to undertake.
 
 In Chapter \ref{chpr:timestamping} we define what a timestamp is and we exploit the essential characteristics of its components: operations and attestations.
 
-In Chapter \ref{chpr:trustless}, after a brief introduction on what Bitcoin is, we show how it can be used to achieve digital timestamping without relying on trusted third parties.
+In Chapter \ref{chpr:trustless}, after a brief introduction on Bitcoin, we show how it can be used to achieve digital timestamping without relying on trusted third parties.
 
 In Chapter \ref{chpr:state-of-art}, we show the state of the art of trustless digital timestamping, with the open source project OpenTimestamps. 
 We provide a description of the standard it defines and the solution to address scalability issues.
