@@ -1,15 +1,20 @@
 \chapter{Conclusions and Future Work}
 \label{chpr:conclusions}
-Trustless timestamping represents the highest level of security for a timestamp. 
-Bitcoin and similar systems make it possible.
-OpenTimestamps solves the problem to define a common standard and its public calendars fix the scalability issue allowing anyone to timestamp for free at the price of a minimum and temporary trust requirement.
+Bitcoin and similar systems make trustless timestamping possible. A user can use his own transaction signing. This represents the highest level of security for a timestamp, relying only on the availability and the tamper-resistance of the bitcoin blockchain.
+
+
+Trust-minimizing timestamping is made possible by the OpenTimestamps protocol. It solves the problem of defining a common standard protocol: its public calendars fix the scalability issue allowing anyone to timestamp for free with minimal and temporary trust requirements.
 Elliptic curve commitments can improve OpenTimestamps by giving the possibility to timestamp at zero marginal cost. 
 If confined to Bitcoin, they give rise to two practical techniques: \textit{pay-to-contract} if the commitment is done using the payee public key, \textit{sign-to-contract} if the commitment is included in the signature. 
-The first is viable but leads the user out of a BIP32 logic, this may compromise his funds in case of unexpected malfunctioning; the second does not involve this kind of risk, hence it should be preferred. 
-However, with segwit, proofs double in size and it is harder to retrieve the information to independently create the timestamps.
-Now \textit{sign-to-contract} is testable and easily accessible thanks to our integration with the bitcoin wallet Electrum.
+The first is viable but leads the user out of a BIP32 logic and this may compromise his funds in case of unexpected malfunctioning; the second does not involve this kind of risk, hence it should be preferred. 
+Thanks to our integration with the bitcoin wallet Electrum, \textit{sign-to-contract} can be tested and it is easily accessible.
 
-The next steps that can extend this route take different orientations, but undoubtedly the first stage is including \verb|OpSecp256k1Commitment| in python-opentimestamp.
-One vein is deepening the study of elliptic curve commitments to examine applications beyond timestamping \cite{TapRoot}.
-Another path consists in defining a reasonable set of rules to allow users to help the calendar by performing external timestamping.
-The last branch is improving the Electrum experience, by adding a RPC to the Electrum server to retrieve the WTXID Merkle tree to independently complete \textit{sing-to-contract} proofs or by embedding the possibility to cooperate with calendars providing external timestamps.
+
+To push this work further, the next step should be the inclusion of \verb|OpSecp256k1Commitment| in the python-opentimestamp library.
+However, with segwit, proofs double in size and it is harder to retrieve the information to independently create the timestamps: this is a problem that would deserve some research, to assess if it could be addressed in some way.
+
+
+Further research could then go in different directions.
+One path would be the definition of a reasonable set of rules to allow simple users to help the calendar by performing external timestamping when signing their own transactions.
+Another one could consist in improving the Electrum experience, by adding a RPC to the Electrum server to retrieve the WTXID Merkle tree so to independently complete \textit{sing-to-contract} proofs or by embedding the possibility to cooperate with calendars providing external timestamps.
+Deeper study of elliptic curve commitments to examine applications beyond timestamping \cite{TapRoot} is also a promising avenue for research.
