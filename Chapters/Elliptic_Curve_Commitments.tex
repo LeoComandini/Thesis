@@ -99,7 +99,7 @@ suitable for the integration in OpenTimestamps.
 Let's analyse how this new commitment operations are structured.
 
 \begin{myprop}
-	Let $E_{\mathbb{F}_p}$ be an elliptic curve defined on the finite field $\mathbb{F}_p$ with $p$ prime, $G \in E_{F_p}$ be the generator of the curve with order $n$ large prime. Let $h$ be a second-preimage resistant hash function, its input are somehow serialized in bits, its output are in $\{0,1\}^k$ and are interpreted as integers.
+	Let $E_{\mathbb{F}_p}$ be an elliptic curve defined on the finite field $\mathbb{F}_p$ with $p$ prime, $G \in E_{F_p}$ be the generator of the curve with order $n$ large prime. Let $h$ be a random oracle hash function, its input are somehow serialized in bits, its output are in $\{0,1\}^k$ and are interpreted as integers.
 	Let $C$ be defined as follows:
 	\begin{equation}
 	\begin{split}
@@ -110,11 +110,11 @@ Let's analyse how this new commitment operations are structured.
 	If $n$ is close to $2^k$, then $C$ is a commitment operation.
 \end{myprop}
 \begin{proof}
-	First we show a direct proof that works when $P$ (or $P'$) is fixed then we show the general proof.
+	First we show a direct proof that works when $P$ (or $P'$) is fixed, then we show the general proof. Actually, in the former case, it is enough requiring $h$ to be second-preimage resistant, while, in the latter, a stronger assumption is needed.
 	\\
 	Let $m,P$ and $C(m,P)$ be fixed.
 	%Let $C(m,P)$ be a commitment to $m, P$.
-	$\forall P' \in E_{\mathbb{F}_p}$ the problem is to find $m' \in \{0,1\}^*$ s.t. $C(m,P)=C(m',P')$ and $(m', P') \neq (m, P)$. 
+	$\forall P' \in E_{\mathbb{F}_p}$ fixed in advance, the problem is to find $m' \in \{0,1\}^*$ s.t. $C(m,P)=C(m',P')$ and $(m', P') \neq (m, P)$. 
 	We want to show that such problem is infeasible.
 	$m'$ satisfies $h(m'||P')G + P'=C(m,P)$.
 	%The substitute value $m'$ needs to satisfy $h(m'||P')G + P'=C(m,P)$.
